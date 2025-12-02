@@ -1,97 +1,112 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { api } from "@/lib/api"
+import { useAuth } from "@/lib/useAuth"
+
+interface TeamPost {
+  id: number
+  title: string
+  description: string
+  required_skills: { id: number; name: string }[]
+  created_at: string
+  owner: {
+    id: number
+    name: string
+    email: string
+    profile_picture?: string | null
+  }
+}
 
 interface FindTeamViewProps {
   onBack: () => void
   onNavigateToProfile: () => void
-  onSignOut: () => void
 }
 
-// Mock data for team requests
-const MOCK_TEAM_REQUESTS = [
-  {
-    id: 1,
-    name: "AI-Powered Chat Application",
-    description: "Building a next-gen chat app with AI suggestions and real-time collaboration",
-    skills: ["Python", "React", "Node.js", "TypeScript"],
-    postedBy: "Alex Chen",
-    postedDate: "2 days ago",
-    applicants: 3,
-  },
-  {
-    id: 2,
-    name: "E-Commerce Platform Redesign",
-    description: "Complete redesign of our e-commerce platform focusing on UX and performance",
-    skills: ["React", "UI Design", "JavaScript", "Cloud"],
-    postedBy: "Sarah Johnson",
-    postedDate: "1 day ago",
-    applicants: 5,
-  },
-  {
-    id: 3,
-    name: "Mobile App MVP Launch",
-    description: "Launching MVP for a fitness tracking mobile application",
-    skills: ["React", "Mobile", "API Design", "TypeScript"],
-    postedBy: "Mike Rodriguez",
-    postedDate: "3 days ago",
-    applicants: 2,
-  },
-  {
-    id: 4,
-    name: "DevOps Infrastructure Setup",
-    description: "Setting up CI/CD pipeline and cloud infrastructure for startup",
-    skills: ["DevOps", "Cloud", "Go", "Database"],
-    postedBy: "Emma Wilson",
-    postedDate: "4 days ago",
-    applicants: 4,
-  },
-  {
-    id: 5,
-    name: "Game Development - 3D Platformer",
-    description: "Creating an indie 3D platformer game with Unity",
-    skills: ["C++", "Game Development", "Graphic Design"],
-    postedBy: "James Park",
-    postedDate: "5 days ago",
-    applicants: 6,
-  },
-  {
-    id: 6,
-    name: "Data Analytics Dashboard",
-    description: "Building interactive analytics dashboard for financial data visualization",
-    skills: ["Python", "React", "Database", "Data Visualization"],
-    postedBy: "Lisa Chen",
-    postedDate: "1 day ago",
-    applicants: 2,
-  },
-]
-
-export default function FindTeamView({ onBack, onNavigateToProfile, onSignOut }: FindTeamViewProps) {
+export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamViewProps) {
+  const { user, logout } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSkillFilter, setSelectedSkillFilter] = useState<string | null>(null)
   const [appliedIds, setAppliedIds] = useState<number[]>([])
+  const [teamPosts, setTeamPosts] = useState<TeamPost[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const allSkills = Array.from(new Set(MOCK_TEAM_REQUESTS.flatMap((req) => req.skills))).sort()
+  useEffect(() => {
+    fetchTeamPosts()
+    fetchAppliedPosts()
+  }, [])
+
+  const fetchTeamPosts = async () => {
+    try {
+      setLoading(true)
+      const posts = await api.getTeamPosts()
+      setTeamPosts(Array.isArray(posts) ? posts : [])
+    } catch (err) {
+      setError('Failed to load team posts')
+      console.error('Error fetching team posts:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchAppliedPosts = async () => {
+    try {
+      const requests = await api.getMyRequests()
+      if (Array.isArray(requests)) {
+        setAppliedIds(requests.map((req: any) => req.post_id))
+      }
+    } catch (err) {
+      console.error('Error fetching applied posts:', err)
+    }
+  }
+
+  const allSkills = Array.from(
+    new Set(teamPosts.flatMap((post) => post.required_skills?.map((skill) => skill.name) ?? []))
+  ).sort()
 
   const filteredRequests = useMemo(() => {
-    return MOCK_TEAM_REQUESTS.filter((request) => {
+    return teamPosts.filter((post) => {
       const matchesSearch =
-        request.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        request.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        request.postedBy.toLowerCase().includes(searchQuery.toLowerCase())
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.owner.name.toLowerCase().includes(searchQuery.toLowerCase())
 
-      const matchesSkill = !selectedSkillFilter || request.skills.includes(selectedSkillFilter)
+      const matchesSkill =
+        !selectedSkillFilter || post.required_skills?.some((skill) => skill.name === selectedSkillFilter)
 
       return matchesSearch && matchesSkill
     })
-  }, [searchQuery, selectedSkillFilter])
+  }, [teamPosts, searchQuery, selectedSkillFilter])
 
-  const handleApply = (id: number) => {
-    setAppliedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
+  const handleApply = async (postId: number) => {
+    try {
+      if (appliedIds.includes(postId)) {
+        // Cancel application - we'd need a cancel endpoint
+        return
+      }
+      
+      await api.createTeamRequest(postId, 'I would like to join this team!')
+      setAppliedIds((prev) => [...prev, postId])
+    } catch (err) {
+      setError('Failed to send team request')
+      console.error('Error creating team request:', err)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+    if (diffDays === 1) return '1 day ago'
+    if (diffDays < 7) return `${diffDays} days ago`
+    return date.toLocaleDateString()
   }
 
   return (
@@ -101,7 +116,7 @@ export default function FindTeamView({ onBack, onNavigateToProfile, onSignOut }:
         description="Browse and apply to projects that match your skills"
         onBack={onBack}
         onNavigateToProfile={onNavigateToProfile}
-        onSignOut={onSignOut}
+        onSignOut={logout}
       />
 
       {/* Content */}
@@ -146,40 +161,48 @@ export default function FindTeamView({ onBack, onNavigateToProfile, onSignOut }:
         </div>
 
         {/* Results */}
-        {filteredRequests.length > 0 ? (
+        {error && (
+          <div className="text-center py-4 text-red-500">
+            {error}
+          </div>
+        )}
+
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading team posts...</p>
+          </div>
+        ) : filteredRequests.length > 0 ? (
           <div className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Showing {filteredRequests.length} of {MOCK_TEAM_REQUESTS.length} team requests
+              Showing {filteredRequests.length} of {teamPosts.length} team requests
             </p>
-            {filteredRequests.map((request) => (
+            {filteredRequests.map((post) => (
               <Card
-                key={request.id}
+                key={post.id}
                 className="bg-card border border-border p-6 hover:border-primary/50 transition-colors"
               >
                 <div className="space-y-4">
                   {/* Title and Meta */}
                   <div>
-                    <h3 className="text-lg font-bold text-foreground">{request.name}</h3>
+                    <h3 className="text-lg font-bold text-foreground">{post.title}</h3>
                     <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span>Posted by {request.postedBy}</span>
+                      <span>Posted by {post.owner.name}</span>
                       <span>•</span>
-                      <span>{request.postedDate}</span>
-                      <span>•</span>
-                      <span>{request.applicants} applicants</span>
+                      <span>{formatDate(post.created_at)}</span>
                     </div>
                   </div>
 
                   {/* Description */}
-                  <p className="text-sm text-foreground leading-relaxed">{request.description}</p>
+                  <p className="text-sm text-foreground leading-relaxed">{post.description}</p>
 
                   {/* Skills */}
                   <div className="flex flex-wrap gap-2">
-                    {request.skills.map((skill) => (
+                    {post.required_skills?.map((skill) => (
                       <span
-                        key={skill}
+                        key={skill.id}
                         className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-secondary border border-border text-foreground"
                       >
-                        {skill}
+                        {skill.name}
                       </span>
                     ))}
                   </div>
@@ -187,14 +210,21 @@ export default function FindTeamView({ onBack, onNavigateToProfile, onSignOut }:
                   {/* Apply Button */}
                   <div className="pt-2">
                     <Button
-                      onClick={() => handleApply(request.id)}
+                      onClick={() => handleApply(post.id)}
+                      disabled={post.owner.id === user?.id}
                       className={`w-full ${
-                        appliedIds.includes(request.id)
+                        post.owner.id === user?.id
+                          ? "bg-muted text-muted-foreground cursor-not-allowed"
+                          : appliedIds.includes(post.id)
                           ? "bg-secondary text-foreground hover:bg-secondary/80"
                           : "bg-primary hover:bg-primary/90 text-primary-foreground"
                       }`}
                     >
-                      {appliedIds.includes(request.id) ? "✓ Application Sent" : "Apply Now"}
+                      {post.owner.id === user?.id 
+                        ? "Your Post" 
+                        : appliedIds.includes(post.id) 
+                        ? "✓ Application Sent" 
+                        : "Apply Now"}
                     </Button>
                   </div>
                 </div>

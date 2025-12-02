@@ -1,49 +1,68 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import PageHeader from "@/components/page-header"
+import { api } from "@/lib/api"
+import { useAuth } from "@/lib/useAuth"
+
+interface TeamRequest {
+  id: number
+  message?: string | null
+  status: string
+  created_at: string
+  post: {
+    id: number
+    title: string
+    description: string
+    required_skills: { id: number; name: string }[]
+    owner: {
+      id: number
+      name: string
+      email: string
+    }
+  }
+}
 
 interface RequestsSentPageProps {
   onBack: () => void
   onNavigateToProfile: () => void
-  onSignOut: () => void
 }
 
-export default function RequestsSentPage({ onBack, onNavigateToProfile, onSignOut }: RequestsSentPageProps) {
-  const [requestsSent] = useState([
-    {
-      id: 1,
-      projectName: "AI Chat Application",
-      posterName: "Sarah Chen",
-      posterDept: "Computer Science",
-      skills: ["Python", "React", "WebSocket"],
-      status: "pending",
-      appliedDate: "2 days ago",
-      description: "Building an AI-powered chat app with real-time messaging",
-    },
-    {
-      id: 2,
-      projectName: "Mobile E-commerce App",
-      posterName: "Mike Johnson",
-      posterDept: "Software Engineering",
-      skills: ["React Native", "Firebase", "UI/UX"],
-      status: "accepted",
-      appliedDate: "5 days ago",
-      description: "Creating a mobile shopping platform with payment integration",
-    },
-    {
-      id: 3,
-      projectName: "Data Visualization Dashboard",
-      posterName: "Alex Rodriguez",
-      posterDept: "Data Science",
-      skills: ["JavaScript", "D3.js", "Python"],
-      status: "rejected",
-      appliedDate: "1 week ago",
-      description: "Analytics dashboard for real-time data insights",
-    },
-  ])
+export default function RequestsSentPage({ onBack, onNavigateToProfile }: RequestsSentPageProps) {
+  const { logout } = useAuth()
+  const [requestsSent, setRequestsSent] = useState<TeamRequest[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchMyRequests()
+  }, [])
+
+  const fetchMyRequests = async () => {
+    try {
+      setLoading(true)
+      const requests = await api.getMyRequests()
+      setRequestsSent(Array.isArray(requests) ? requests : [])
+    } catch (err) {
+      setError('Failed to load your requests')
+      console.error('Error fetching requests:', err)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    
+    if (diffDays === 1) return '1 day ago'
+    if (diffDays < 7) return `${diffDays} days ago`
+    return date.toLocaleDateString()
+  }
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -63,55 +82,79 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile, onSignOu
         description="Track all the team requests you've applied to"
         onBack={onBack}
         onNavigateToProfile={onNavigateToProfile}
-        onSignOut={onSignOut}
+        onSignOut={logout}
       />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="space-y-4">
-          {requestsSent.map((request) => (
-            <Card key={request.id} className="bg-card border-border p-6 hover:border-primary/50 transition">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <h3 className="text-lg font-bold text-foreground">{request.projectName}</h3>
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium border capitalize ${getStatusColor(request.status)}`}
-                    >
-                      {request.status}
-                    </span>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-3">{request.description}</p>
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {request.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary border border-primary/20"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="text-sm text-muted-foreground space-y-1">
-                    <p>
-                      <strong>Posted by:</strong> {request.posterName} ({request.posterDept})
-                    </p>
-                    <p>
-                      <strong>Applied:</strong> {request.appliedDate}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {requestsSent.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground mb-4">You haven't sent any team requests yet.</p>
-            <Button onClick={onBack} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              Browse Team Requests
-            </Button>
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm">
+            {error}
           </div>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading your requests...</p>
+          </div>
+        ) : (
+          <>
+            <div className="space-y-4">
+              {requestsSent.map((request) => (
+                <Card key={request.id} className="bg-card border-border p-6 hover:border-primary/50 transition">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-bold text-foreground">{request.post.title}</h3>
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-medium border capitalize ${getStatusColor(request.status)}`}
+                        >
+                          {request.status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground mb-3">{request.post.description}</p>
+                      
+                      {/* My message */}
+                      <div className="mb-3 p-3 bg-muted/50 rounded-md border-l-4 border-primary">
+                        <p className="text-sm text-foreground">
+                          <strong>Your message:</strong> "{request.message || 'No message provided'}"
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {request.post.required_skills?.map((skill) => (
+                          <span
+                            key={skill.id}
+                            className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary border border-primary/20"
+                          >
+                            {skill.name}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="text-sm text-muted-foreground space-y-1">
+                        <p>
+                          <strong>Posted by:</strong> {request.post.owner.name}
+                        </p>
+                        <p>
+                          <strong>Applied:</strong> {formatDate(request.created_at)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {requestsSent.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground mb-4">You haven't sent any team requests yet.</p>
+                <Button onClick={onBack} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Browse Team Requests
+                </Button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </div>

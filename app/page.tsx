@@ -1,57 +1,27 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import AuthPage from "@/components/auth-page"
-import DashboardPage from "@/components/dashboard-page"
-import ProfilePage from "@/components/profile-page"
-import RequestsSentPage from "@/components/requests-sent-page"
-import MyRequestsPage from "@/components/my-requests-page"
-
-type View = "auth" | "dashboard" | "profile" | "requests-sent" | "my-requests"
+import { useAuth } from "@/lib/useAuth"
 
 export default function Home() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [currentView, setCurrentView] = useState<View>("auth")
+  const router = useRouter()
+  const { user, isLoading } = useAuth()
 
-  const handleSignOut = () => {
-    setIsAuthenticated(false)
-    setCurrentView("auth")
-  }
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace("/dashboard")
+    }
+  }, [isLoading, user, router])
 
-  if (!isAuthenticated) {
-    return <AuthPage onAuthenticate={() => setIsAuthenticated(true)} />
-  }
-
-  if (currentView === "profile") {
-    return <ProfilePage onBack={() => setCurrentView("dashboard")} />
-  }
-
-  if (currentView === "requests-sent") {
+  if (isLoading) {
     return (
-      <RequestsSentPage
-        onBack={() => setCurrentView("dashboard")}
-        onNavigateToProfile={() => setCurrentView("profile")}
-        onSignOut={handleSignOut}
-      />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
     )
   }
 
-  if (currentView === "my-requests") {
-    return (
-      <MyRequestsPage
-        onBack={() => setCurrentView("dashboard")}
-        onNavigateToProfile={() => setCurrentView("profile")}
-        onSignOut={handleSignOut}
-      />
-    )
-  }
-
-  return (
-    <DashboardPage
-      onNavigateToProfile={() => setCurrentView("profile")}
-      onNavigateToRequestsSent={() => setCurrentView("requests-sent")}
-      onNavigateToMyRequests={() => setCurrentView("my-requests")}
-      onSignOut={handleSignOut}
-    />
-  )
+  return <AuthPage />
 }

@@ -5,9 +5,10 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { api } from "@/lib/api"
 
 interface AuthPageProps {
-  onAuthenticate: () => void
+  onAuthenticate?: () => void
 }
 
 export default function AuthPage({ onAuthenticate }: AuthPageProps) {
@@ -18,14 +19,26 @@ export default function AuthPage({ onAuthenticate }: AuthPageProps) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (email && password) {
-      onAuthenticate()
+      onAuthenticate?.()
     }
   }
 
-  const handleGoogleAuth = () => {
-    // Google OAuth would be implemented here
-    // For now, simulating successful authentication
-    onAuthenticate()
+  const handleGoogleAuth = async () => {
+    try {
+      console.log('Attempting to get Google auth URL...')
+      const response = await api.getGoogleAuthUrl()
+      console.log('Google auth response:', response)
+      
+      if (response.authorization_url) {
+        console.log('Redirecting to:', response.authorization_url)
+        window.location.href = response.authorization_url
+      } else {
+        throw new Error('No authorization URL received')
+      }
+    } catch (error) {
+      console.error('Authentication failed:', error)
+      alert(`Authentication failed: ${error.message || 'Please try again.'}`)
+    }
   }
 
   return (
