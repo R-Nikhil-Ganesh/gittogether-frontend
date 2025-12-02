@@ -1,0 +1,125 @@
+"use client"
+
+import { useState } from "react"
+import ProfileHeader from "@/components/profile-header"
+import PostTeamView from "@/components/post-team-view"
+import FindTeamView from "@/components/find-team-view"
+
+type View = "dashboard" | "post" | "find"
+
+interface DashboardPageProps {
+  onNavigateToProfile: () => void
+  onNavigateToRequestsSent: () => void
+  onNavigateToMyRequests: () => void
+}
+
+export default function DashboardPage({
+  onNavigateToProfile,
+  onNavigateToRequestsSent,
+  onNavigateToMyRequests,
+}: DashboardPageProps) {
+  const [currentView, setCurrentView] = useState<View>("dashboard")
+
+  if (currentView === "post") {
+    return <PostTeamView onBack={() => setCurrentView("dashboard")} onNavigateToProfile={onNavigateToProfile} />
+  }
+
+  if (currentView === "find") {
+    return <FindTeamView onBack={() => setCurrentView("dashboard")} onNavigateToProfile={onNavigateToProfile} />
+  }
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
+          <p className="text-sm text-muted-foreground">Build amazing projects with your team</p>
+        </div>
+        <div className="flex items-center gap-4">
+          <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition">Sign Out</button>
+          <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
+        </div>
+      </div>
+
+      {/* Main Content - Fork in the Road */}
+      <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
+        <div className="w-full max-w-4xl space-y-12">
+          <div className="text-center space-y-2">
+            <h2 className="text-4xl font-bold text-foreground">What would you like to do?</h2>
+            <p className="text-lg text-muted-foreground">
+              Choose your path to find collaborators or share your project
+            </p>
+          </div>
+
+          {/* Quick Action Buttons */}
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <button
+              onClick={onNavigateToRequestsSent}
+              className="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
+            >
+              Requests Sent
+            </button>
+            <button
+              onClick={onNavigateToMyRequests}
+              className="px-4 py-2 text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
+            >
+              My Requests
+            </button>
+          </div>
+
+          {/* Two Path Options */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            {/* Post a Team Request */}
+            <button
+              onClick={() => setCurrentView("post")}
+              className="group relative overflow-hidden rounded-lg border border-border bg-card p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative space-y-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition">
+                    Post a Team Request
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Share your project idea and find developers or designers to join your team
+                  </p>
+                </div>
+              </div>
+            </button>
+
+            {/* Find a Team */}
+            <button
+              onClick={() => setCurrentView("find")}
+              className="group relative overflow-hidden rounded-lg border border-border bg-card p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+              <div className="relative space-y-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-accent/10 text-accent group-hover:bg-accent/20">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Browse active team requests and apply to projects that match your skills
+                  </p>
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
