@@ -1,15 +1,21 @@
 "use client"
 
-import { useState } from "react"
+import type React from "react"
+
+import { useState, useRef } from "react"
+import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
 interface ProfilePageProps {
   onBack: () => void
+  onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
-export default function ProfilePage({ onBack }: ProfilePageProps) {
+export default function ProfilePage({ onBack, onNavigateToProfile, onSignOut }: ProfilePageProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [profileData, setProfileData] = useState({
     name: "John Developer",
     year: "3rd Year",
@@ -27,6 +33,17 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
     setEditData({ ...editData, [field]: value })
   }
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setEditData({ ...editData, image: reader.result as string })
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   const handleSave = () => {
     setProfileData(editData)
     setIsEditing(false)
@@ -39,20 +56,13 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
-          <p className="text-sm text-muted-foreground">Build amazing projects with your team</p>
-        </div>
-        <Button
-          onClick={onBack}
-          variant="outline"
-          className="border-border text-foreground hover:bg-secondary bg-transparent"
-        >
-          Back to Dashboard
-        </Button>
-      </div>
+      <PageHeader
+        title="My Profile"
+        description="Manage your personal information and social links"
+        onBack={onBack}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto py-8 px-4">
@@ -60,7 +70,7 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
           <div className="p-8 space-y-8">
             {/* Title */}
             <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold text-foreground">My Profile</h2>
+              <h2 className="text-3xl font-bold text-foreground">Profile Details</h2>
               {!isEditing && (
                 <Button
                   onClick={() => setIsEditing(true)}
@@ -73,22 +83,38 @@ export default function ProfilePage({ onBack }: ProfilePageProps) {
 
             {/* Profile Image Section */}
             <div className="flex flex-col items-center gap-4">
-              <img
-                src={profileData.image || "/placeholder.svg"}
-                alt="Profile"
-                className="w-24 h-24 rounded-full border-2 border-primary"
-              />
-              {isEditing && (
-                <div className="w-full space-y-2">
-                  <label className="text-sm font-medium text-foreground">Profile Image URL</label>
-                  <Input
-                    type="text"
-                    value={editData.image}
-                    onChange={(e) => handleInputChange("image", e.target.value)}
-                    placeholder="https://example.com/image.jpg"
-                    className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+              {isEditing ? (
+                <div className="flex flex-col items-center gap-4">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="relative group w-24 h-24 rounded-full border-2 border-primary overflow-hidden hover:border-primary/70 transition"
+                  >
+                    <img
+                      src={editData.image || "/placeholder.svg"}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </div>
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    className="hidden"
                   />
+                  <p className="text-xs text-muted-foreground">Click to upload image</p>
                 </div>
+              ) : (
+                <img
+                  src={profileData.image || "/placeholder.svg"}
+                  alt="Profile"
+                  className="w-24 h-24 rounded-full border-2 border-primary"
+                />
               )}
             </div>
 

@@ -3,14 +3,15 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import ProfileHeader from "@/components/profile-header"
+import PageHeader from "@/components/page-header"
 
 interface RequestsSentPageProps {
   onBack: () => void
   onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
-export default function RequestsSentPage({ onBack, onNavigateToProfile }: RequestsSentPageProps) {
+export default function RequestsSentPage({ onBack, onNavigateToProfile, onSignOut }: RequestsSentPageProps) {
   const [requestsSent] = useState([
     {
       id: 1,
@@ -57,32 +58,15 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
-          <p className="text-sm text-muted-foreground">Team requests you've sent</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition">Sign Out</button>
-          <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
-        </div>
-      </div>
+      <PageHeader
+        title="Requests Sent"
+        description="Track all the team requests you've applied to"
+        onBack={onBack}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">Requests Sent</h2>
-            <p className="text-muted-foreground mt-2">Track all the team requests you've applied to</p>
-          </div>
-          <Button
-            onClick={onBack}
-            variant="outline"
-            className="border-border text-foreground hover:bg-secondary bg-transparent"
-          >
-            Back to Dashboard
-          </Button>
-        </div>
-
         <div className="space-y-4">
           {requestsSent.map((request) => (
             <Card key={request.id} className="bg-card border-border p-6 hover:border-primary/50 transition">

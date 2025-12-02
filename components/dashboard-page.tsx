@@ -11,34 +11,42 @@ interface DashboardPageProps {
   onNavigateToProfile: () => void
   onNavigateToRequestsSent: () => void
   onNavigateToMyRequests: () => void
+  onSignOut: () => void
 }
 
 export default function DashboardPage({
   onNavigateToProfile,
   onNavigateToRequestsSent,
   onNavigateToMyRequests,
+  onSignOut,
 }: DashboardPageProps) {
   const [currentView, setCurrentView] = useState<View>("dashboard")
 
   if (currentView === "post") {
-    return <PostTeamView onBack={() => setCurrentView("dashboard")} onNavigateToProfile={onNavigateToProfile} />
+    return (
+      <PostTeamView
+        onBack={() => setCurrentView("dashboard")}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
+    )
   }
 
   if (currentView === "find") {
-    return <FindTeamView onBack={() => setCurrentView("dashboard")} onNavigateToProfile={onNavigateToProfile} />
+    return (
+      <FindTeamView
+        onBack={() => setCurrentView("dashboard")}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
+    )
   }
 
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
-          <p className="text-sm text-muted-foreground">Build amazing projects with your team</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition">Sign Out</button>
-          <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
-        </div>
+        <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
+        <ProfileHeader onNavigateToProfile={onNavigateToProfile} onSignOut={onSignOut} />
       </div>
 
       {/* Main Content - Fork in the Road */}

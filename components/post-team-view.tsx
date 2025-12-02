@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import ProfileHeader from "@/components/profile-header"
+import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input"
 interface PostTeamViewProps {
   onBack: () => void
   onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
 const AVAILABLE_SKILLS = [
@@ -37,7 +38,7 @@ const AVAILABLE_SKILLS = [
   "Mobile",
 ]
 
-export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamViewProps) {
+export default function PostTeamView({ onBack, onNavigateToProfile, onSignOut }: PostTeamViewProps) {
   const [eventName, setEventName] = useState("")
   const [description, setDescription] = useState("")
   const [selectedSkills, setSelectedSkills] = useState<string[]>([])
@@ -56,23 +57,13 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-4"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Dashboard
-          </button>
-          <h1 className="text-2xl font-bold text-foreground">Post a Team Request</h1>
-          <p className="text-sm text-muted-foreground">Share your project and find the right team members</p>
-        </div>
-        <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
-      </div>
+      <PageHeader
+        title="Post a Team Request"
+        description="Share your project and find the right team members"
+        onBack={onBack}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
 
       {/* Form */}
       <div className="max-w-2xl mx-auto px-6 py-12">

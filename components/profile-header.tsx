@@ -1,17 +1,16 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 interface ProfileHeaderProps {
   onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
-export default function ProfileHeader({ onNavigateToProfile }: ProfileHeaderProps) {
+export default function ProfileHeader({ onNavigateToProfile, onSignOut }: ProfileHeaderProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
-  const router = useRouter()
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -26,6 +25,11 @@ export default function ProfileHeader({ onNavigateToProfile }: ProfileHeaderProp
 
   const handleProfileClick = () => {
     onNavigateToProfile()
+    setIsDropdownOpen(false)
+  }
+
+  const handleSignOutClick = () => {
+    onSignOut()
     setIsDropdownOpen(false)
   }
 
@@ -56,7 +60,7 @@ export default function ProfileHeader({ onNavigateToProfile }: ProfileHeaderProp
             <p className="text-xs text-muted-foreground">3rd Year • Computer Science</p>
           </div>
 
-          <div className="p-2">
+          <div className="p-2 space-y-1">
             <Button
               onClick={handleProfileClick}
               variant="ghost"
@@ -77,6 +81,21 @@ export default function ProfileHeader({ onNavigateToProfile }: ProfileHeaderProp
                 />
               </svg>
               Settings
+            </Button>
+            <Button
+              onClick={handleSignOutClick}
+              variant="ghost"
+              className="w-full justify-start text-red-400 hover:bg-red-500/10"
+            >
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              Sign Out
             </Button>
           </div>
         </div>

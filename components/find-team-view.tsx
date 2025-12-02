@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import ProfileHeader from "@/components/profile-header"
+import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 interface FindTeamViewProps {
   onBack: () => void
   onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
 // Mock data for team requests
@@ -69,7 +70,7 @@ const MOCK_TEAM_REQUESTS = [
   },
 ]
 
-export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamViewProps) {
+export default function FindTeamView({ onBack, onNavigateToProfile, onSignOut }: FindTeamViewProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedSkillFilter, setSelectedSkillFilter] = useState<string | null>(null)
   const [appliedIds, setAppliedIds] = useState<number[]>([])
@@ -95,23 +96,13 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <button
-            onClick={onBack}
-            className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-4"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-            Back to Dashboard
-          </button>
-          <h1 className="text-2xl font-bold text-foreground">Find a Team</h1>
-          <p className="text-sm text-muted-foreground">Browse and apply to projects that match your skills</p>
-        </div>
-        <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
-      </div>
+      <PageHeader
+        title="Find a Team"
+        description="Browse and apply to projects that match your skills"
+        onBack={onBack}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
 
       {/* Content */}
       <div className="max-w-5xl mx-auto px-6 py-8">

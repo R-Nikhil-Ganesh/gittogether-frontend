@@ -3,16 +3,38 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import ProfileHeader from "@/components/profile-header"
+import PageHeader from "@/components/page-header"
+
+interface Applicant {
+  id: number
+  name: string
+  department: string
+  skills: string[]
+  appliedForRequestId: number
+  appliedDate: string
+  status: "pending" | "accepted" | "rejected"
+  year: string
+}
+
+interface PostedRequest {
+  id: number
+  projectName: string
+  description: string
+  skills: string[]
+  status: "active" | "closed"
+  postedDate: string
+  applicantCount: number
+}
 
 interface MyRequestsPageProps {
   onBack: () => void
   onNavigateToProfile: () => void
+  onSignOut: () => void
 }
 
-export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyRequestsPageProps) {
+export default function MyRequestsPage({ onBack, onNavigateToProfile, onSignOut }: MyRequestsPageProps) {
   const [activeTab, setActiveTab] = useState<"posted" | "applicants">("posted")
-  const [postedRequests] = useState([
+  const [postedRequests, setPostedRequests] = useState<PostedRequest[]>([
     {
       id: 1,
       projectName: "Machine Learning Pipeline",
@@ -42,7 +64,7 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
     },
   ])
 
-  const [applicants] = useState([
+  const [applicants, setApplicants] = useState<Applicant[]>([
     {
       id: 1,
       name: "Emma Wilson",
@@ -85,6 +107,22 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
     },
   ])
 
+  const handleToggleStatus = (requestId: number) => {
+    setPostedRequests(
+      postedRequests.map((req) =>
+        req.id === requestId ? { ...req, status: req.status === "active" ? "closed" : "active" } : req,
+      ),
+    )
+  }
+
+  const handleAcceptApplicant = (applicantId: number) => {
+    setApplicants(applicants.map((app) => (app.id === applicantId ? { ...app, status: "accepted" } : app)))
+  }
+
+  const handleRejectApplicant = (applicantId: number) => {
+    setApplicants(applicants.map((app) => (app.id === applicantId ? { ...app, status: "rejected" } : app)))
+  }
+
   const applicantsByRequest = postedRequests.map((request) => ({
     ...request,
     applicantList: applicants.filter((applicant) => applicant.appliedForRequestId === request.id),
@@ -92,32 +130,15 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="border-b border-border px-6 py-4 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">GitTogether</h1>
-          <p className="text-sm text-muted-foreground">Manage your team requests</p>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition">Sign Out</button>
-          <ProfileHeader onNavigateToProfile={onNavigateToProfile} />
-        </div>
-      </div>
+      <PageHeader
+        title="My Requests"
+        description="Manage your posted requests and view applicants"
+        onBack={onBack}
+        onNavigateToProfile={onNavigateToProfile}
+        onSignOut={onSignOut}
+      />
 
       <div className="max-w-4xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold text-foreground">My Requests</h2>
-            <p className="text-muted-foreground mt-2">Manage your posted requests and view applicants</p>
-          </div>
-          <Button
-            onClick={onBack}
-            variant="outline"
-            className="border-border text-foreground hover:bg-secondary bg-transparent"
-          >
-            Back to Dashboard
-          </Button>
-        </div>
-
         {/* Tabs */}
         <div className="flex gap-4 mb-8 border-b border-border">
           <button
@@ -151,15 +172,16 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-2">
                       <h3 className="text-lg font-bold text-foreground">{request.projectName}</h3>
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                      <button
+                        onClick={() => handleToggleStatus(request.id)}
+                        className={`px-3 py-1 rounded-full text-xs font-medium border cursor-pointer transition ${
                           request.status === "active"
-                            ? "bg-green-500/20 text-green-400 border-green-500/30"
-                            : "bg-gray-500/20 text-gray-400 border-gray-500/30"
+                            ? "bg-green-500/20 text-green-400 border-green-500/30 hover:bg-green-500/30"
+                            : "bg-gray-500/20 text-gray-400 border-gray-500/30 hover:bg-gray-500/30"
                         }`}
                       >
                         {request.status}
-                      </span>
+                      </button>
                     </div>
                     <p className="text-sm text-muted-foreground mb-3">{request.description}</p>
                     <div className="flex flex-wrap gap-2 mb-4">
@@ -235,11 +257,16 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
                               <div className="flex gap-2">
                                 {applicant.status === "pending" && (
                                   <>
-                                    <Button size="sm" className="bg-green-500 hover:bg-green-600 text-white">
+                                    <Button
+                                      size="sm"
+                                      onClick={() => handleAcceptApplicant(applicant.id)}
+                                      className="bg-green-500 hover:bg-green-600 text-white"
+                                    >
                                       Accept
                                     </Button>
                                     <Button
                                       size="sm"
+                                      onClick={() => handleRejectApplicant(applicant.id)}
                                       variant="outline"
                                       className="border-border text-foreground hover:bg-secondary bg-transparent"
                                     >

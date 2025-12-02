@@ -13,6 +13,11 @@ export default function Home() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [currentView, setCurrentView] = useState<View>("auth")
 
+  const handleSignOut = () => {
+    setIsAuthenticated(false)
+    setCurrentView("auth")
+  }
+
   if (!isAuthenticated) {
     return <AuthPage onAuthenticate={() => setIsAuthenticated(true)} />
   }
@@ -26,6 +31,7 @@ export default function Home() {
       <RequestsSentPage
         onBack={() => setCurrentView("dashboard")}
         onNavigateToProfile={() => setCurrentView("profile")}
+        onSignOut={handleSignOut}
       />
     )
   }
@@ -35,6 +41,7 @@ export default function Home() {
       <MyRequestsPage
         onBack={() => setCurrentView("dashboard")}
         onNavigateToProfile={() => setCurrentView("profile")}
+        onSignOut={handleSignOut}
       />
     )
   }
@@ -44,6 +51,7 @@ export default function Home() {
       onNavigateToProfile={() => setCurrentView("profile")}
       onNavigateToRequestsSent={() => setCurrentView("requests-sent")}
       onNavigateToMyRequests={() => setCurrentView("my-requests")}
+      onSignOut={handleSignOut}
     />
   )
 }
