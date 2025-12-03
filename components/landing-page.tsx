@@ -327,10 +327,6 @@ export default function LandingPage() {
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[var(--text-white)] mb-6">Ready to build something amazing?</h2>
           <p className="text-xl text-[var(--text-muted)] mb-10 max-w-2xl mx-auto">Join 1,200+ students building the future. It's free, open-source, and designed for you.</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-lg px-10 py-4 shadow-xl shadow-[var(--primary)]/30 hover:shadow-[var(--primary)]/50">Get Started for Free</a>
-            <a href="#" className="btn btn-outline text-lg px-10 py-4 bg-[var(--bg-main)]">View Demo</a>
-          </div>
         </div>
       </section>
 
