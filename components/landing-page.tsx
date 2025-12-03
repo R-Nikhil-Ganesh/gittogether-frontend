@@ -237,7 +237,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Workflow</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">From Idea to MVP in 3 Steps</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">From Idea to Deployment in 3 Steps</h3>
           </div>
 
           <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -268,54 +268,6 @@ export default function LandingPage() {
               <div className="absolute -top-3 right-1/2 translate-x-1/2 md:right-auto md:left-[60%] bg-[var(--bg-main)] px-2 text-sm font-bold text-[var(--text-muted)]">03</div>
               <h4 className="text-xl font-bold text-[var(--text-white)] mb-2">Ship It</h4>
               <p className="text-[var(--text-muted)] text-sm leading-relaxed max-w-xs">Get a dedicated workspace, manage tasks, and deploy your project together.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section id="community" className="py-24 bg-[var(--bg-sidebar)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-[var(--accent-purple)] font-semibold tracking-wide uppercase text-sm mb-2">Community Stories</h2>
-            <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">Built by Students, for Students.</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative">
-              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
-              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"I found a backend dev for my final year capstone in less than 2 hours. We actually ended up winning the department showcase!"</p>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600"></div>
-                <div>
-                  <div className="font-bold text-[var(--text-white)]">Sarah J.</div>
-                  <div className="text-xs text-[var(--text-muted)]">Computer Science, NYU</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative md:-mt-4 shadow-xl shadow-[var(--primary)]/5">
-              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
-              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"As a designer, it's hard to find devs who want to build side projects. GitTogether bridged that gap perfectly."</p>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600"></div>
-                <div>
-                  <div className="font-bold text-[var(--text-white)]">Alex M.</div>
-                  <div className="text-xs text-[var(--text-muted)]">HCI, Georgia Tech</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative">
-              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
-              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"Used this for HackHarvard. Our team was a mix of sophomores and seniors who had never met. Best hackathon experience yet."</p>
-              <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-orange-600"></div>
-                <div>
-                  <div className="font-bold text-[var(--text-white)]">Davide R.</div>
-                  <div className="text-xs text-[var(--text-muted)]">Electrical Eng, MIT</div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
