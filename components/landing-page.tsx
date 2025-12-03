@@ -138,7 +138,7 @@ export default function LandingPage() {
             <a href="#features" className="btn btn-outline text-lg px-8">Explore Projects</a>
           </div>
 
-          <p className="text-sm text-[var(--text-muted)] mt-4">* Only use EEC email ID</p>
+          <p className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">* Only use EEC email ID</p>
 
           {/* Hero Image Mockup */}
           <div className="mt-16 relative mx-auto max-w-5xl">
