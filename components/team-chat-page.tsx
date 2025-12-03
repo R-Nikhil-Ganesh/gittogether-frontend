@@ -57,6 +57,7 @@ export default function TeamChatPage({ teamId, onBack, onNavigateToProfile }: Te
   const [loadingMessages, setLoadingMessages] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [profileUserId, setProfileUserId] = useState<number | null>(null)
+  const [removingMemberId, setRemovingMemberId] = useState<number | null>(null)
 
   const loadTeamDetails = useCallback(async () => {
     try {
@@ -161,6 +162,29 @@ export default function TeamChatPage({ teamId, onBack, onNavigateToProfile }: Te
     []
   )
 
+  const handleRemoveMember = async (memberId: number) => {
+    if (!team || team.role !== "owner" || memberId === user?.id) {
+      return
+    }
+
+    const confirmed = window.confirm("Remove this member from the team? They will lose access to the chat.")
+    if (!confirmed) {
+      return
+    }
+
+    try {
+      setRemovingMemberId(memberId)
+      await api.removeTeamMember(team.id, memberId)
+      await loadTeamDetails()
+      await loadMessages(true)
+    } catch (err) {
+      console.error("Failed to remove member", err)
+      setError("Failed to remove member")
+    } finally {
+      setRemovingMemberId(null)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <PageHeader
@@ -207,25 +231,39 @@ export default function TeamChatPage({ teamId, onBack, onNavigateToProfile }: Te
                 <h4 className="text-sm font-medium text-muted-foreground">Team Members</h4>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {team.members.map((member) => (
-                    <button
-                      type="button"
+                    <div
                       key={member.id}
-                      onClick={() => handleOpenProfile(member.id)}
-                      className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium transition ${
+                      className={`flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium ${
                         member.id === user?.id
                           ? "border-primary/40 bg-primary/15 text-primary"
-                          : "border-border bg-secondary text-foreground hover:bg-secondary/80"
+                          : "border-border bg-secondary text-foreground"
                       }`}
                     >
-                      <ProfileAvatar
-                        name={member.name}
-                        imageUrl={member.profile_picture}
-                        size="xs"
-                      />
-                      <span>
-                        {member.name} {member.role === "owner" ? "(Owner)" : ""}
-                      </span>
-                    </button>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenProfile(member.id)}
+                        className="flex items-center gap-2"
+                      >
+                        <ProfileAvatar
+                          name={member.name}
+                          imageUrl={member.profile_picture}
+                          size="xs"
+                        />
+                        <span>
+                          {member.name} {member.role === "owner" ? "(Owner)" : ""}
+                        </span>
+                      </button>
+                      {team.role === "owner" && member.id !== user?.id && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveMember(member.id)}
+                          disabled={removingMemberId === member.id}
+                          className="rounded-full border border-red-500/50 px-2 py-0.5 text-[10px] uppercase tracking-wide text-red-300 hover:bg-red-500/10 disabled:opacity-60"
+                        >
+                          {removingMemberId === member.id ? "Removing" : "Remove"}
+                        </button>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import PageHeader from "@/components/page-header"
 import { TeamEditorModal } from "@/components/team-editor-modal"
+import { TeamMembersModal } from "@/components/team-members-modal"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { api } from "@/lib/api"
@@ -54,6 +55,8 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
   const [error, setError] = useState<string | null>(null)
   const [editorTeamId, setEditorTeamId] = useState<number | null>(null)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
+  const [membersModalTeam, setMembersModalTeam] = useState<TeamSummary | null>(null)
+  const [isMembersModalOpen, setIsMembersModalOpen] = useState(false)
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -79,6 +82,11 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
   const openEditor = (teamId: number) => {
     setEditorTeamId(teamId)
     setIsEditorOpen(true)
+  }
+
+  const openMembersModal = (team: TeamSummary) => {
+    setMembersModalTeam(team)
+    setIsMembersModalOpen(true)
   }
 
   return (
@@ -151,13 +159,23 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <div className="flex gap-2">
                     {team.role === "owner" && (
-                      <Button
-                        type="button"
-                        className="border border-primary/50 bg-blue-900/30 text-blue-100 text-sm hover:bg-blue-900/40"
-                        onClick={() => openEditor(team.id)}
-                      >
-                        Edit Details
-                      </Button>
+                      <>
+                        <Button
+                          type="button"
+                          className="border border-primary/50 bg-blue-900/30 text-blue-100 text-sm hover:bg-blue-900/40"
+                          onClick={() => openEditor(team.id)}
+                        >
+                          Edit Details
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="border border-accent/40 text-accent text-sm hover:bg-accent/10"
+                          onClick={() => openMembersModal(team)}
+                        >
+                          Manage Members
+                        </Button>
+                      </>
                     )}
                   </div>
                   <Button onClick={() => onSelectTeam(team.id)} className="text-sm">
@@ -177,6 +195,15 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
           setEditorTeamId(null)
         }}
         onSuccess={fetchTeams}
+      />
+      <TeamMembersModal
+        team={membersModalTeam}
+        open={isMembersModalOpen}
+        onClose={() => {
+          setIsMembersModalOpen(false)
+          setMembersModalTeam(null)
+        }}
+        onMemberRemoved={fetchTeams}
       />
     </div>
   )

@@ -133,6 +133,9 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({ content }),
   }),
+  removeTeamMember: (teamId: number, memberId: number) => apiCall(`/teams/${teamId}/members/${memberId}`, {
+    method: 'DELETE',
+  }),
 
   // Skills
   getSkills: () => apiCall('/posts/skills/'),
