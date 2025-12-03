@@ -8,7 +8,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     // set title
-    document.title = "GitTogether - Connect. Collaborate. Create."
+    document.title = "GittoGether - Connect. Collaborate. Create."
 
     // Load lucide icons script dynamically
     if (typeof window !== "undefined" && !(window as any).lucide) {
@@ -68,7 +68,7 @@ export default function LandingPage() {
             --accent-pink: #ec4899;
             --success-icon: #10b981;
         }
-        body { background-color: var(--bg-main); color: var(--text-main); }
+        body { background-color: var(--bg-main); color: var(--text-main); scroll-behavior: smooth; }
         .text-brand { color: var(--primary-light); }
         .text-muted { color: var(--text-muted); }
         .bg-card { background-color: var(--bg-card); }
@@ -102,7 +102,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
                 <i data-lucide="cpu" style={{ width: 20 }}></i>
               </div>
-              <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GitTogether</span>
+              <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GittoGether</span>
             </div>
 
             <div className="hidden md:flex items-center gap-8">
@@ -190,11 +190,12 @@ export default function LandingPage() {
         </div>
       </section>
 
+
       {/* Features Section */}
       <section id="features" className="py-24 bg-[var(--bg-sidebar)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Why GitTogether?</h2>
+            <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Why GittoGather?</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">Everything you need to ship.</h3>
           </div>
 
@@ -226,8 +227,130 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-24 bg-[var(--bg-main)] relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+          <div className="absolute top-1/4 -left-64 w-96 h-96 bg-[var(--primary-deep)] rounded-full blur-[100px] opacity-20"></div>
+          <div className="absolute bottom-1/4 -right-64 w-96 h-96 bg-[var(--accent-purple)] rounded-full blur-[100px] opacity-20"></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Workflow</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">From Idea to MVP in 3 Steps</h3>
+          </div>
+
+          <div className="relative grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div className="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-[var(--border-light)] via-[var(--primary)] to-[var(--border-light)] z-0"></div>
+
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-light)] flex items-center justify-center mb-6 shadow-lg group-hover:border-[var(--primary)] group-hover:shadow-[var(--primary)]/20 transition-all duration-300">
+                <i data-lucide="user-plus" className="w-10 h-10 text-[var(--primary-light)]"></i>
+              </div>
+              <div className="absolute -top-3 right-1/2 translate-x-1/2 md:right-auto md:left-[60%] bg-[var(--bg-main)] px-2 text-sm font-bold text-[var(--text-muted)]">01</div>
+              <h4 className="text-xl font-bold text-[var(--text-white)] mb-2">Create Profile</h4>
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed max-w-xs">Sync your Github, highlight your tech stack (e.g., MERN, Rust), and showcase your portfolio.</p>
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-light)] flex items-center justify-center mb-6 shadow-lg group-hover:border-[var(--accent-purple)] group-hover:shadow-[var(--accent-purple)]/20 transition-all duration-300">
+                <i data-lucide="search" className="w-10 h-10 text-[var(--accent-purple)]"></i>
+              </div>
+              <div className="absolute -top-3 right-1/2 translate-x-1/2 md:right-auto md:left-[60%] bg-[var(--bg-main)] px-2 text-sm font-bold text-[var(--text-muted)]">02</div>
+              <h4 className="text-xl font-bold text-[var(--text-white)] mb-2">Find Your Squad</h4>
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed max-w-xs">Browse projects by tech stack or event (e.g., "HackMIT"). Send a request with one click.</p>
+            </div>
+
+            <div className="relative z-10 flex flex-col items-center text-center group">
+              <div className="w-24 h-24 rounded-2xl bg-[var(--bg-card)] border border-[var(--border-light)] flex items-center justify-center mb-6 shadow-lg group-hover:border-[var(--accent-pink)] group-hover:shadow-[var(--accent-pink)]/20 transition-all duration-300">
+                <i data-lucide="rocket" className="w-10 h-10 text-[var(--accent-pink)]"></i>
+              </div>
+              <div className="absolute -top-3 right-1/2 translate-x-1/2 md:right-auto md:left-[60%] bg-[var(--bg-main)] px-2 text-sm font-bold text-[var(--text-muted)]">03</div>
+              <h4 className="text-xl font-bold text-[var(--text-white)] mb-2">Ship It</h4>
+              <p className="text-[var(--text-muted)] text-sm leading-relaxed max-w-xs">Get a dedicated workspace, manage tasks, and deploy your project together.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="community" className="py-24 bg-[var(--bg-sidebar)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-[var(--accent-purple)] font-semibold tracking-wide uppercase text-sm mb-2">Community Stories</h2>
+            <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">Built by Students, for Students.</h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative">
+              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
+              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"I found a backend dev for my final year capstone in less than 2 hours. We actually ended up winning the department showcase!"</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600"></div>
+                <div>
+                  <div className="font-bold text-[var(--text-white)]">Sarah J.</div>
+                  <div className="text-xs text-[var(--text-muted)]">Computer Science, NYU</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative md:-mt-4 shadow-xl shadow-[var(--primary)]/5">
+              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
+              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"As a designer, it's hard to find devs who want to build side projects. GittoGather bridged that gap perfectly."</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-600"></div>
+                <div>
+                  <div className="font-bold text-[var(--text-white)]">Alex M.</div>
+                  <div className="text-xs text-[var(--text-muted)]">HCI, Georgia Tech</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[var(--bg-card)] border border-[var(--border-light)] p-8 rounded-2xl relative">
+              <i data-lucide="quote" className="absolute top-8 right-8 text-[var(--bg-hover)] w-8 h-8"></i>
+              <p className="text-[var(--text-main)] mb-6 leading-relaxed">"Used this for HackHarvard. Our team was a mix of sophomores and seniors who had never met. Best hackathon experience yet."</p>
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-500 to-orange-600"></div>
+                <div>
+                  <div className="font-bold text-[var(--text-white)]">Davide R.</div>
+                  <div className="text-xs text-[var(--text-muted)]">Electrical Eng, MIT</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-main)] to-[var(--primary-deep)] opacity-50"></div>
+        <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
+          <h2 className="text-4xl md:text-5xl font-extrabold text-[var(--text-white)] mb-6">Ready to build something amazing?</h2>
+          <p className="text-xl text-[var(--text-muted)] mb-10 max-w-2xl mx-auto">Join 1,200+ students building the future. It's free, open-source, and designed for you.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-lg px-10 py-4 shadow-xl shadow-[var(--primary)]/30 hover:shadow-[var(--primary)]/50">Get Started for Free</a>
+            <a href="#" className="btn btn-outline text-lg px-10 py-4 bg-[var(--bg-main)]">View Demo</a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <section className="bg-[var(--bg-sidebar)] pt-16 pb-8 border-t border-[var(--border-dark)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center gap-2 mb-4 md:mb-0">
+              <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
+                <i data-lucide="cpu" style={{ width: 20 }}></i>
+              </div>
+              <span className="font-bold text-xl text-[var(--text-white)]">GittoGether</span>
+            </div>
+            <div className="text-[var(--text-dim)] text-sm">&copy; 2024 GittoGether. Built for builders.</div>
+          </div>
+        </div>
+      </section>
+
       {/* Stats Section */}
-      <section className="py-20 border-y border-[var(--border-light)] bg-[var(--bg-main)]">
+      <footer className="py-20 border-y border-[var(--border-light)] bg-[var(--bg-main)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
@@ -246,21 +369,6 @@ export default function LandingPage() {
               <div className="text-4xl font-bold text-[var(--text-white)] mb-2">24h</div>
               <div className="text-sm text-[var(--text-muted)] uppercase tracking-wide">Avg. Team Fill Time</div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[var(--bg-sidebar)] pt-16 pb-8 border-t border-[var(--border-dark)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
-                <i data-lucide="cpu" style={{ width: 20 }}></i>
-              </div>
-              <span className="font-bold text-xl text-[var(--text-white)]">GitTogether</span>
-            </div>
-            <div className="text-[var(--text-dim)] text-sm">&copy; 2024 GitTogether. Built for builders.</div>
           </div>
         </div>
       </footer>
