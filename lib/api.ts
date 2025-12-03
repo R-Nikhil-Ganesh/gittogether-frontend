@@ -92,6 +92,9 @@ export const api = {
     method: 'DELETE',
   }),
 
+  // Users
+  getUserPublicProfile: (userId: number) => apiCall(`/users/${userId}`),
+
   // Posts
   getTeamPosts: (params: Record<string, unknown> = {}) => apiCall(`/posts/${buildQueryString(params)}`),
   getTeamPost: (id: number) => apiCall(`/posts/${id}`),
@@ -121,6 +124,14 @@ export const api = {
   }),
   deleteTeamRequest: (requestId: number) => apiCall(`/requests/${requestId}`, {
     method: 'DELETE',
+  }),
+
+  // Teams & chat
+  getMyTeams: () => apiCall('/teams/mine'),
+  getTeamMessages: (teamId: number) => apiCall(`/teams/${teamId}/messages`),
+  sendTeamMessage: (teamId: number, content: string) => apiCall(`/teams/${teamId}/messages`, {
+    method: 'POST',
+    body: JSON.stringify({ content }),
   }),
 
   // Skills

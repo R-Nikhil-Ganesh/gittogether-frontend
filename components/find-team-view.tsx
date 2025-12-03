@@ -2,9 +2,11 @@
 
 import { useState, useMemo, useEffect } from "react"
 import PageHeader from "@/components/page-header"
+import { ProfileAvatar } from "@/components/profile-avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import UserProfileModal from "@/components/user-profile-modal"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/useAuth"
 
@@ -35,6 +37,7 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
   const [teamPosts, setTeamPosts] = useState<TeamPost[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [profileUserId, setProfileUserId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchTeamPosts()
@@ -185,8 +188,21 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
                   {/* Title and Meta */}
                   <div>
                     <h3 className="text-lg font-bold text-foreground">{post.title}</h3>
-                    <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
-                      <span>Posted by {post.owner.name}</span>
+                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <ProfileAvatar
+                          name={post.owner.name}
+                          imageUrl={post.owner.profile_picture}
+                          size="xs"
+                        />
+                        <button
+                          type="button"
+                          className="text-left underline-offset-2 hover:underline"
+                          onClick={() => setProfileUserId(post.owner.id)}
+                        >
+                          Posted by {post.owner.name}
+                        </button>
+                      </div>
                       <span>•</span>
                       <span>{formatDate(post.created_at)}</span>
                     </div>
@@ -209,23 +225,33 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
 
                   {/* Apply Button */}
                   <div className="pt-2">
-                    <Button
-                      onClick={() => handleApply(post.id)}
-                      disabled={post.owner.id === user?.id}
-                      className={`w-full ${
-                        post.owner.id === user?.id
-                          ? "bg-muted text-muted-foreground cursor-not-allowed"
-                          : appliedIds.includes(post.id)
-                          ? "bg-secondary text-foreground hover:bg-secondary/80"
-                          : "bg-primary hover:bg-primary/90 text-primary-foreground"
-                      }`}
-                    >
-                      {post.owner.id === user?.id 
-                        ? "Your Post" 
-                        : appliedIds.includes(post.id) 
-                        ? "✓ Application Sent" 
-                        : "Apply Now"}
-                    </Button>
+                    <div className="flex flex-col gap-2 sm:flex-row">
+                      <Button
+                        onClick={() => handleApply(post.id)}
+                        disabled={post.owner.id === user?.id}
+                        className={`flex-1 ${
+                          post.owner.id === user?.id
+                            ? "bg-muted text-muted-foreground cursor-not-allowed"
+                            : appliedIds.includes(post.id)
+                            ? "bg-secondary text-foreground hover:bg-secondary/80"
+                            : "bg-primary hover:bg-primary/90 text-primary-foreground"
+                        }`}
+                      >
+                        {post.owner.id === user?.id 
+                          ? "Your Post" 
+                          : appliedIds.includes(post.id) 
+                          ? "✓ Application Sent" 
+                          : "Apply Now"}
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="flex-1 border-border text-foreground hover:bg-secondary"
+                        onClick={() => setProfileUserId(post.owner.id)}
+                      >
+                        View Profile
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -251,6 +277,7 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
           </div>
         )}
       </div>
+      <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
     </div>
   )
 }

@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import PageHeader from "@/components/page-header"
+import { ProfileAvatar } from "@/components/profile-avatar"
+import UserProfileModal from "@/components/user-profile-modal"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/useAuth"
 
@@ -17,6 +19,7 @@ interface TeamPost {
     id: number
     name: string
     email: string
+    profile_picture?: string | null
   }
 }
 
@@ -30,6 +33,7 @@ interface TeamRequest {
     id: number
     name: string
     email: string
+    profile_picture?: string | null
   }
   post: TeamPost
 }
@@ -46,6 +50,7 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
   const [requestsForMyPosts, setRequestsForMyPosts] = useState<TeamRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [profileUserId, setProfileUserId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchData()
@@ -214,7 +219,20 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-2">
-                                  <h4 className="font-bold text-foreground">{request.requester.name}</h4>
+                                  <button
+                                    type="button"
+                                    onClick={() => setProfileUserId(request.requester.id)}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <ProfileAvatar
+                                      name={request.requester.name}
+                                      imageUrl={request.requester.profile_picture}
+                                      size="sm"
+                                    />
+                                    <span className="font-bold text-foreground hover:underline">
+                                      {request.requester.name}
+                                    </span>
+                                  </button>
                                   <span
                                     className={`px-3 py-1 rounded-full text-xs font-medium border ${
                                       request.status === "accepted"
@@ -236,6 +254,14 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
                                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                                   <span>Applied {formatDate(request.created_at)}</span>
                                   <div className="flex gap-2">
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="border-border text-foreground hover:bg-secondary"
+                                      onClick={() => setProfileUserId(request.requester.id)}
+                                    >
+                                      View Profile
+                                    </Button>
                                     {request.status === "pending" && (
                                       <>
                                         <Button
@@ -291,6 +317,8 @@ export default function MyRequestsPage({ onBack, onNavigateToProfile }: MyReques
             )}
           </>
         )}
+
+        <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
       </div>
     </div>
   )

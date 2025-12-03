@@ -4,6 +4,7 @@ import type React from "react"
 
 import { useState, useRef, useEffect } from "react"
 import PageHeader from "@/components/page-header"
+import { ProfileAvatar } from "@/components/profile-avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -199,10 +200,11 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                         onClick={() => fileInputRef.current?.click()}
                         className="relative group w-24 h-24 rounded-full border-2 border-primary overflow-hidden hover:border-primary/70 transition"
                       >
-                        <img
-                          src={editData.profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${editData.name || 'profile'}`}
-                          alt="Profile"
-                          className="w-full h-full object-cover"
+                        <ProfileAvatar
+                          name={editData.name}
+                          imageUrl={editData.profile_picture}
+                          size="xl"
+                          className="h-full w-full"
                         />
                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
                           <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,10 +222,11 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                       <p className="text-xs text-muted-foreground">Click to upload image</p>
                     </div>
                   ) : (
-                    <img
-                      src={profileData.profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${profileData.name || 'profile'}`}
-                      alt="Profile"
-                      className="w-24 h-24 rounded-full border-2 border-primary"
+                    <ProfileAvatar
+                      name={profileData.name}
+                      imageUrl={profileData.profile_picture}
+                      size="xl"
+                      className="border-2 border-primary"
                     />
                   )}
                 </div>

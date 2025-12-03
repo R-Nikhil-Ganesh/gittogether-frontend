@@ -11,6 +11,7 @@ interface DashboardPageProps {
   onNavigateToMyRequests: () => void
   onNavigateToFindTeam: () => void
   onNavigateToPostTeam: () => void
+  onNavigateToTeams: () => void
 }
 
 export default function DashboardPage({
@@ -19,6 +20,7 @@ export default function DashboardPage({
   onNavigateToMyRequests,
   onNavigateToFindTeam,
   onNavigateToPostTeam,
+  onNavigateToTeams,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
@@ -77,6 +79,12 @@ export default function DashboardPage({
                 className="px-4 py-2 text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
               >
                 My Requests {dashboardData?.pending_received_requests ? `(${dashboardData.pending_received_requests})` : ""}
+              </button>
+              <button
+                onClick={onNavigateToTeams}
+                className="px-4 py-2 text-sm rounded-lg bg-secondary/20 text-foreground border border-border hover:border-primary transition"
+              >
+                My Teams & Chat
               </button>
             </div>
 

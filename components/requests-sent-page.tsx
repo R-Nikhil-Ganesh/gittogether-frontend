@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import PageHeader from "@/components/page-header"
+import { ProfileAvatar } from "@/components/profile-avatar"
+import UserProfileModal from "@/components/user-profile-modal"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/useAuth"
 
@@ -21,6 +23,7 @@ interface TeamRequest {
       id: number
       name: string
       email: string
+      profile_picture?: string | null
     }
   }
 }
@@ -35,6 +38,7 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
   const [requestsSent, setRequestsSent] = useState<TeamRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [profileUserId, setProfileUserId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchMyRequests()
@@ -133,13 +137,33 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
                         ))}
                       </div>
                       <div className="text-sm text-muted-foreground space-y-1">
-                        <p>
-                          <strong>Posted by:</strong> {request.post.owner.name}
+                        <p className="flex flex-wrap items-center gap-2">
+                          <strong>Posted by:</strong>
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 text-left underline-offset-2 hover:underline"
+                            onClick={() => setProfileUserId(request.post.owner.id)}
+                          >
+                            <ProfileAvatar
+                              name={request.post.owner.name}
+                              imageUrl={request.post.owner.profile_picture}
+                              size="xs"
+                            />
+                            {request.post.owner.name}
+                          </button>
                         </p>
                         <p>
                           <strong>Applied:</strong> {formatDate(request.created_at)}
                         </p>
                       </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="mt-4 border-border text-foreground hover:bg-secondary"
+                        onClick={() => setProfileUserId(request.post.owner.id)}
+                      >
+                        View Profile
+                      </Button>
                     </div>
                   </div>
                 </Card>
@@ -156,6 +180,8 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
             )}
           </>
         )}
+
+        <UserProfileModal userId={profileUserId} onClose={() => setProfileUserId(null)} />
       </div>
     </div>
   )
