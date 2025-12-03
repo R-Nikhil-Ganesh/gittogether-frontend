@@ -29,7 +29,7 @@ export function ProfileAvatar({
 
   return (
     <img
-      src={getProfileImageUrl(name, imageUrl)}
+      src={getProfileImageUrl(name, imageUrl) ?? undefined}
       alt={resolvedAlt}
       className={cn("rounded-full object-cover", sizeMap[size], className)}
       referrerPolicy="no-referrer"

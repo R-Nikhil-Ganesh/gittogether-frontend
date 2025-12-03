@@ -35,7 +35,7 @@ export default function AuthPage({ onAuthenticate }: AuthPageProps) {
       } else {
         throw new Error('No authorization URL received')
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Authentication failed:', error)
       alert(`Authentication failed: ${error.message || 'Please try again.'}`)
     }
