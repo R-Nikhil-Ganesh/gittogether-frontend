@@ -2,6 +2,22 @@ const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://gittogether-b
 
 const normalizeEndpoint = (endpoint: string) => (endpoint.startsWith('/') ? endpoint : `/${endpoint}`)
 
+const triggerForcedLogout = (reason?: string) => {
+  if (typeof window === 'undefined') {
+    return
+  }
+  try {
+    localStorage.removeItem('access_token')
+    localStorage.removeItem('user')
+  } catch (error) {
+    console.warn('Failed to clear auth storage on logout', error)
+  }
+  window.dispatchEvent(new CustomEvent('auth-logout', { detail: { reason } }))
+  if (window.location.pathname !== '/') {
+    window.location.href = '/'
+  }
+}
+
 const parseJsonSafe = async (response: Response) => {
   const text = await response.text()
   if (!text) {
@@ -41,6 +57,12 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
   if (!response.ok) {
     const errorPayload = await parseJsonSafe(response)
     console.error('API call failed:', response.status, response.statusText, 'URL:', fullUrl, 'Payload:', errorPayload)
+
+    if (response.status === 401) {
+      triggerForcedLogout('token_expired')
+      throw new Error('Your session expired. Please sign in again.')
+    }
+
     throw new Error(typeof errorPayload === 'string' ? errorPayload : response.statusText)
   }
 
