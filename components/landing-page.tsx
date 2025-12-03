@@ -124,7 +124,6 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-light)] mb-8">
             <span className="flex h-2 w-2 rounded-full bg-[var(--success-icon)]"></span>
-            <span className="text-xs font-medium text-[var(--text-muted)]">v2.0 is live for University Students</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
@@ -137,7 +136,7 @@ export default function LandingPage() {
           </p>
 
           <div className="btn btn-outline text-lg px-8">
-            <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-lg px-8">
+            <a href="#" onClick={handleGoogleAuth} className="btn btn-outline text-lg px-8">
               Find a Team
             </a>
             <a href="#features" className="btn btn-outline text-lg px-8">Explore Projects</a>
