@@ -40,6 +40,7 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
     description: "",
     max_members: 5,
     required_skill_ids: [] as number[],
+    required_skill_names: [] as string[],
   })
 
   useEffect(() => {
@@ -73,6 +74,7 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
             description: data.description,
             max_members: data.max_members,
             required_skill_ids: data.required_skills?.map((skill: Skill) => skill.id) ?? [],
+            required_skill_names: [],
           })
         }
       } catch (err) {
@@ -100,8 +102,8 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
       return
     }
 
-    if (!form.title || !form.description || form.required_skill_ids.length === 0) {
-      setError("Please complete all fields and select at least one skill")
+    if (!form.title || !form.description) {
+      setError("Please complete all fields")
       return
     }
 
@@ -113,6 +115,7 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
         description: form.description,
         max_members: form.max_members,
         required_skill_ids: form.required_skill_ids,
+        required_skill_names: form.required_skill_names,
       })
       onSuccess()
       onClose()
@@ -249,9 +252,22 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
                     ))}
                   </div>
                 )}
-                {form.required_skill_ids.length === 0 && (
-                  <p className="text-xs text-destructive">Select at least one skill</p>
-                )}
+                <div className="mt-3 space-y-2">
+                  <label className="text-xs text-muted-foreground">Add new skill names (comma-separated)</label>
+                  <Input
+                    placeholder="e.g., Python, React, Tailwind"
+                    value={form.required_skill_names.join(', ')}
+                    onChange={(event) => {
+                      const raw = event.target.value
+                      const names = raw
+                        .split(',')
+                        .map((n) => n.trim())
+                        .filter((n) => n.length > 0)
+                      setForm((prev) => ({ ...prev, required_skill_names: names }))
+                    }}
+                    className="bg-input border-border"
+                  />
+                </div>
               </div>
             </div>
           )}
