@@ -86,8 +86,8 @@ export default function LandingPage() {
         .nav-link { color: var(--text-muted); font-weight: 500; transition: color 0.2s; }
         .nav-link:hover { color: var(--text-white); }
         .blob { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: var(--primary-deep); }
-        .blob-2 { bottom: 10%; right: -5%; width: 400px; height: 400px; background: rgba(168, 85, 247, 0.2); }
+        .blob-1 { top: -5%; left: 10%; width: 300px; height: 300px; background: var(--primary-deep); }
+        .blob-2 { bottom: 20%; right: 10%; width: 250px; height: 250px; background: rgba(168, 85, 247, 0.2); }
       `}</style>
 
       {/* Background Effects */}
