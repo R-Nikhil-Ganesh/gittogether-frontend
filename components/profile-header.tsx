@@ -47,7 +47,7 @@ export default function ProfileHeader({ onNavigateToProfile, onSignOut }: Profil
             size="md"
             className="border border-primary/50"
           />
-          <div className="text-left min-w-[120px]">
+          <div className="text-left min-w-[120px] hidden sm:block">
             <p className="text-sm font-medium text-foreground leading-none">{user?.name ?? 'Loading user'}</p>
             <p className="text-xs text-muted-foreground truncate">{user?.email ?? ''}</p>
           </div>
