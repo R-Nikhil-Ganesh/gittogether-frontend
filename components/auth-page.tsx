@@ -1,43 +1,25 @@
 "use client"
 
-import type React from "react"
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { api } from "@/lib/api"
 
-interface AuthPageProps {
-  onAuthenticate?: () => void
-}
-
-export default function AuthPage({ onAuthenticate }: AuthPageProps) {
-  const [isSignUp, setIsSignUp] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email && password) {
-      onAuthenticate?.()
-    }
-  }
-
+export default function AuthPage() {
   const handleGoogleAuth = async () => {
     try {
-      console.log('Attempting to get Google auth URL...')
+      console.log("Attempting to get Google auth URL...")
       const response = await api.getGoogleAuthUrl()
-      console.log('Google auth response:', response)
-      
+      console.log("Google auth response:", response)
+
       if (response.authorization_url) {
-        console.log('Redirecting to:', response.authorization_url)
+        console.log("Redirecting to:", response.authorization_url)
         window.location.href = response.authorization_url
       } else {
-        throw new Error('No authorization URL received')
+        throw new Error("No authorization URL received")
       }
     } catch (error: any) {
-      console.error('Authentication failed:', error)
-      alert(`Authentication failed: ${error.message || 'Please try again.'}`)
+      console.error("Authentication failed:", error)
+      alert(`Authentication failed: ${error.message || "Please try again."}`)
     }
   }
 
@@ -47,11 +29,15 @@ export default function AuthPage({ onAuthenticate }: AuthPageProps) {
         <div className="p-8 space-y-6">
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold text-foreground">GitTogether</h1>
-            <p className="text-sm text-muted-foreground">Find your perfect development team</p>
+            <p className="text-sm text-muted-foreground">
+              Find your perfect development team
+            </p>
           </div>
 
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreground text-center">Sign in with your Google account to get started</p>
+            <p className="text-sm text-muted-foreground text-center">
+              Sign in with your Google account to get started
+            </p>
 
             <Button
               onClick={handleGoogleAuth}
@@ -63,57 +49,6 @@ export default function AuthPage({ onAuthenticate }: AuthPageProps) {
               Sign in with Google
             </Button>
           </div>
-
-          {/* Conditional rendering for email/password forms */}
-          {isSignUp && (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Email</label>
-                <Input
-                  type="email"
-                  placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-foreground">Password</label>
-                <Input
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="bg-input border-border text-foreground placeholder:text-muted-foreground"
-                />
-              </div>
-
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                {isSignUp ? "Sign Up" : "Sign In"}
-              </Button>
-            </form>
-          )}
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">
-                {isSignUp ? "Already have an account?" : "Don't have an account?"}
-              </span>
-            </div>
-          </div>
-
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full border-border text-foreground hover:bg-secondary bg-transparent"
-            onClick={() => setIsSignUp(!isSignUp)}
-          >
-            {isSignUp ? "Sign In" : "Sign Up"}
-          </Button>
         </div>
       </Card>
     </div>
