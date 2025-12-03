@@ -67,49 +67,55 @@ export default function DashboardPage({
       ) : (
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
           <div className="w-full max-w-4xl space-y-12">
-            <div className="text-center space-y-2">
-              <h2 className="text-4xl font-bold text-foreground">What would you like to do?</h2>
-              <p className="text-lg text-muted-foreground">
+            <div className="text-center space-y-2 px-4">
+              <h2 className="text-2xl sm:text-4xl font-bold text-foreground">What would you like to do?</h2>
+              <p className="text-base sm:text-lg text-muted-foreground">
                 Choose your path to find collaborators or share your project
               </p>
             </div>
 
             {/* Quick Action Buttons */}
-            <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="grid grid-cols-2 sm:flex sm:items-center sm:justify-center gap-3 sm:gap-4 mb-8">
               <button
                 onClick={onNavigateToRequestsSent}
-                className="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
               >
-                Requests Sent {dashboardData?.pending_sent_requests ? `(${dashboardData.pending_sent_requests})` : ""}
+                <span className="hidden sm:inline">Requests Sent</span>
+                <span className="sm:hidden">Sent</span>
+                {dashboardData?.pending_sent_requests ? ` (${dashboardData.pending_sent_requests})` : ""}
               </button>
               <button
                 onClick={onNavigateToMyRequests}
-                className="px-4 py-2 text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
               >
-                My Requests {dashboardData?.pending_received_requests ? `(${dashboardData.pending_received_requests})` : ""}
+                <span className="hidden sm:inline">My Requests</span>
+                <span className="sm:hidden">Received</span>
+                {dashboardData?.pending_received_requests ? ` (${dashboardData.pending_received_requests})` : ""}
               </button>
               <button
                 onClick={onNavigateToTeams}
-                className="px-4 py-2 text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-secondary/20 text-foreground border border-border hover:border-primary transition"
               >
-                My Teams & Chat
+                <span className="hidden sm:inline">My Teams & Chat</span>
+                <span className="sm:hidden">Teams</span>
               </button>
               {isAdmin && onNavigateToAdmin && (
                 <button
                   onClick={onNavigateToAdmin}
-                  className="px-4 py-2 text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
                 >
-                  Admin Dashboard
+                  <span className="hidden sm:inline">Admin Dashboard</span>
+                  <span className="sm:hidden">Admin</span>
                 </button>
               )}
             </div>
 
             {/* Two Path Options */}
-            <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto px-4">
               {/* Post a Team Request */}
               <button
                 onClick={onNavigateToPostTeam}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -119,7 +125,7 @@ export default function DashboardPage({
                     </svg>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition">
                       Post a Team Request
                     </h3>
                     <p className="text-sm text-muted-foreground mt-2">
@@ -132,7 +138,7 @@ export default function DashboardPage({
               {/* Find a Team */}
               <button
                 onClick={onNavigateToFindTeam}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -147,7 +153,7 @@ export default function DashboardPage({
                     </svg>
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
                     <p className="text-sm text-muted-foreground mt-2">
                       Browse active team requests and apply to projects that match your skills
                     </p>
