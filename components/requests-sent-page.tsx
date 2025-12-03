@@ -19,6 +19,7 @@ interface TeamRequest {
     title: string
     description: string
     required_skills: { id: number; name: string }[]
+    event_name?: string | null
     owner: {
       id: number
       name: string
@@ -109,8 +110,13 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
                 <Card key={request.id} className="bg-card border-border p-6 hover:border-primary/50 transition">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex flex-wrap items-center gap-3 mb-2">
                         <h3 className="text-lg font-bold text-foreground">{request.post.title}</h3>
+                        {request.post.event_name && (
+                          <span className="px-3 py-1 rounded-full text-xs font-medium border bg-primary/10 text-primary border-primary/30">
+                            {request.post.event_name}
+                          </span>
+                        )}
                         <span
                           className={`px-3 py-1 rounded-full text-xs font-medium border capitalize ${getStatusColor(request.status)}`}
                         >

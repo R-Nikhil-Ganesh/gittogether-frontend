@@ -16,6 +16,7 @@ interface TeamPost {
   description: string
   required_skills: { id: number; name: string }[]
   created_at: string
+  event_name?: string | null
   owner: {
     id: number
     name: string
@@ -74,10 +75,12 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
 
   const filteredRequests = useMemo(() => {
     return teamPosts.filter((post) => {
+      const query = searchQuery.toLowerCase()
       const matchesSearch =
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.owner.name.toLowerCase().includes(searchQuery.toLowerCase())
+        post.title.toLowerCase().includes(query) ||
+        post.description.toLowerCase().includes(query) ||
+        post.owner.name.toLowerCase().includes(query) ||
+        (post.event_name?.toLowerCase().includes(query) ?? false)
 
       const matchesSkill =
         !selectedSkillFilter || post.required_skills?.some((skill) => skill.name === selectedSkillFilter)
@@ -189,6 +192,12 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
                   <div>
                     <h3 className="text-lg font-bold text-foreground">{post.title}</h3>
                     <div className="flex flex-wrap items-center gap-3 mt-2 text-xs text-muted-foreground">
+                      {post.event_name && (
+                        <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-primary">
+                          {post.event_name}
+                        </span>
+                      )}
+                      {post.event_name && <span>•</span>}
                       <div className="flex items-center gap-2">
                         <ProfileAvatar
                           name={post.owner.name}

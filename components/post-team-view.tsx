@@ -26,6 +26,7 @@ const QUICK_SKILL_OPTIONS = ["Python", "Frontend", "Backend", "Mobile", "UI/UX",
 export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamViewProps) {
   const { logout } = useAuth()
   const [title, setTitle] = useState("")
+  const [eventName, setEventName] = useState("")
   const [description, setDescription] = useState("")
   const [maxMembers, setMaxMembers] = useState(5)
   const [skills, setSkills] = useState<Skill[]>([])
@@ -98,6 +99,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title || !description || (selectedSkillIds.length === 0 && customSkillNames.length === 0)) {
+      if (!title || !description || (selectedSkillIds.length === 0 && customSkillNames.length === 0)) {
       setError('Please fill in all fields and add at least one skill')
       return
     }
@@ -109,6 +111,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
       await api.createTeamPost({
         title,
         description,
+        event_name: eventName.trim() || undefined,
         max_members: maxMembers,
         required_skill_ids: selectedSkillIds,
         required_skill_names: customSkillNames,
@@ -117,6 +120,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
       // Reset form
       setTitle("")
       setDescription("")
+        setEventName("")
       setMaxMembers(5)
       setSelectedSkillIds([])
       setCustomSkillNames([])
@@ -156,6 +160,19 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
             {/* Project Title */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-foreground">Project Title</label>
+                          {/* Event Name */}
+                          <div className="space-y-2">
+                            <label className="text-sm font-semibold text-foreground flex items-center justify-between">
+                              Event Name <span className="text-xs text-muted-foreground">Optional</span>
+                            </label>
+                            <Input
+                              placeholder="e.g., Smart India Hackathon"
+                              value={eventName}
+                              onChange={(e) => setEventName(e.target.value)}
+                              className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                            />
+                            <p className="text-xs text-muted-foreground">Mention the event, hackathon, or contest if this post is tied to one.</p>
+                          </div>
               <Input
                 placeholder="e.g., AI Collaboration Platform"
                 value={title}

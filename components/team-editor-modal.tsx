@@ -19,6 +19,7 @@ interface TeamDetails {
   description: string
   max_members: number
   required_skills: Skill[]
+  event_name?: string | null
 }
 
 interface TeamEditorModalProps {
@@ -41,6 +42,7 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
     max_members: 5,
     required_skill_ids: [] as number[],
     required_skill_names: [] as string[],
+    event_name: "",
   })
 
   useEffect(() => {
@@ -75,6 +77,7 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
             max_members: data.max_members,
             required_skill_ids: data.required_skills?.map((skill: Skill) => skill.id) ?? [],
             required_skill_names: [],
+            event_name: data.event_name || "",
           })
         }
       } catch (err) {
@@ -110,12 +113,14 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
     try {
       setSaving(true)
       setError(null)
+      const normalizedEventName = form.event_name?.trim() ?? ""
       await api.updateTeamPost(teamId, {
         title: form.title,
         description: form.description,
         max_members: form.max_members,
         required_skill_ids: form.required_skill_ids,
         required_skill_names: form.required_skill_names,
+        event_name: normalizedEventName.length ? normalizedEventName : null,
       })
       onSuccess()
       onClose()
@@ -201,6 +206,18 @@ export function TeamEditorModal({ teamId, open, onClose, onSuccess }: TeamEditor
                   value={form.title}
                   onChange={(event) => setForm((prev) => ({ ...prev, title: event.target.value }))}
                   placeholder="e.g., AI Collaboration Platform"
+                  className="bg-input border-border"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-foreground flex items-center justify-between">
+                  Event Name <span className="text-xs text-muted-foreground">Optional</span>
+                </label>
+                <Input
+                  value={form.event_name}
+                  onChange={(event) => setForm((prev) => ({ ...prev, event_name: event.target.value }))}
+                  placeholder="e.g., Smart India Hackathon"
                   className="bg-input border-border"
                 />
               </div>
