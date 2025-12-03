@@ -122,9 +122,6 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative pt-20 pb-32 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--bg-card)] border border-[var(--border-light)] mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-[var(--success-icon)]"></span>
-          </div>
 
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
             Stop Coding Alone. <br />
