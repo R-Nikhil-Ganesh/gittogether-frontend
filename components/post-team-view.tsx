@@ -35,6 +35,8 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
   const [skillsLoading, setSkillsLoading] = useState(true)
   const [skillsError, setSkillsError] = useState<string | null>(null)
   const [quickAddInfo, setQuickAddInfo] = useState<string | null>(null)
+  const [customSkillInput, setCustomSkillInput] = useState("")
+  const [customSkillNames, setCustomSkillNames] = useState<string[]>([])
 
   useEffect(() => {
     const loadSkills = async () => {
@@ -63,7 +65,11 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
   const handleQuickSkill = (skillName: string) => {
     const match = skills.find((skill) => skill.name.toLowerCase() === skillName.toLowerCase())
     if (!match) {
-      setQuickAddInfo(`"${skillName}" is not available yet. Add it in the admin panel to use it here.`)
+      // add as custom skill name for auto-creation
+      setCustomSkillNames((prev) =>
+        prev.includes(skillName) ? prev : [...prev, skillName]
+      )
+      setQuickAddInfo(`${skillName} will be created for this post`)
       return
     }
     if (selectedSkillIds.includes(match.id)) {
@@ -75,10 +81,24 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
     }
   }
 
+  const addCustomSkill = () => {
+    const value = customSkillInput.trim()
+    if (!value) {
+      return
+    }
+    setCustomSkillNames((prev) => (prev.includes(value) ? prev : [...prev, value]))
+    setQuickAddInfo(`${value} will be created for this post`)
+    setCustomSkillInput("")
+  }
+
+  const removeCustomSkill = (name: string) => {
+    setCustomSkillNames((prev) => prev.filter((skill) => skill !== name))
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!title || !description || selectedSkillIds.length === 0) {
-      setError('Please fill in all fields and select at least one skill')
+    if (!title || !description || (selectedSkillIds.length === 0 && customSkillNames.length === 0)) {
+      setError('Please fill in all fields and add at least one skill')
       return
     }
 
@@ -90,7 +110,8 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
         title,
         description,
         max_members: maxMembers,
-        required_skill_ids: selectedSkillIds
+        required_skill_ids: selectedSkillIds,
+        required_skill_names: customSkillNames,
       })
       
       // Reset form
@@ -98,6 +119,8 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
       setDescription("")
       setMaxMembers(5)
       setSelectedSkillIds([])
+      setCustomSkillNames([])
+      setCustomSkillInput("")
       
       // Show success message and navigate back
       alert("Team request posted successfully!")
@@ -201,6 +224,25 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
                 {quickAddInfo && (
                   <p className="text-xs text-muted-foreground">{quickAddInfo}</p>
                 )}
+                {customSkillNames.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {customSkillNames.map((name) => (
+                      <span
+                        key={name}
+                        className="flex items-center gap-2 rounded-full border border-dashed border-primary/60 px-3 py-1 text-xs text-primary"
+                      >
+                        {name}
+                        <button
+                          type="button"
+                          onClick={() => removeCustomSkill(name)}
+                          className="text-primary hover:text-primary/70"
+                        >
+                          ×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
@@ -223,9 +265,29 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
                   ))
                 )}
               </div>
-              {selectedSkillIds.length === 0 && (
-                <p className="text-xs text-destructive">Please select at least one skill</p>
-              )}
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-muted-foreground">Add custom skills</label>
+                <div className="flex gap-2">
+                  <Input
+                    placeholder="e.g., Backend, NLP, Tailwind"
+                    value={customSkillInput}
+                    onChange={(e) => setCustomSkillInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        addCustomSkill()
+                      }
+                    }}
+                    className="bg-input border-border"
+                  />
+                  <Button type="button" variant="secondary" onClick={addCustomSkill}>
+                    Add
+                  </Button>
+                </div>
+                {selectedSkillIds.length === 0 && customSkillNames.length === 0 && (
+                  <p className="text-xs text-destructive">Please add at least one skill</p>
+                )}
+              </div>
             </div>
 
             {/* Actions */}
@@ -245,7 +307,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
                   loading ||
                   !title ||
                   !description ||
-                  selectedSkillIds.length === 0 ||
+                  (selectedSkillIds.length === 0 && customSkillNames.length === 0) ||
                   maxMembers < 1
                 }
                 className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50"

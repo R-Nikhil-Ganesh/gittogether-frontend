@@ -102,14 +102,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       initializeAuth()
     }
 
+    const handleForcedLogout = () => {
+      logout()
+    }
+
     initializeAuth()
 
     window.addEventListener('storage', handleAuthChange)
+    window.addEventListener('auth-logout', handleForcedLogout as EventListener)
 
     return () => {
       window.removeEventListener('storage', handleAuthChange)
+      window.removeEventListener('auth-logout', handleForcedLogout as EventListener)
     }
-  }, [initializeAuth])
+  }, [initializeAuth, logout])
 
   return (
     <AuthContext.Provider
