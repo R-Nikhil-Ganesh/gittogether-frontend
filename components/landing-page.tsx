@@ -8,7 +8,7 @@ export default function LandingPage() {
 
   useEffect(() => {
     // set title
-    document.title = "GittoGather - Connect. Collaborate. Create."
+    document.title = "GittoGether - Connect. Collaborate. Create."
 
     // Load lucide icons script dynamically
     if (typeof window !== "undefined" && !(window as any).lucide) {
@@ -102,7 +102,7 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
                 <i data-lucide="cpu" style={{ width: 20 }}></i>
               </div>
-              <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GittoGather</span>
+              <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GittoGether</span>
             </div>
 
             <div className="hidden md:flex items-center gap-8">
@@ -194,7 +194,7 @@ export default function LandingPage() {
       <section id="features" className="py-24 bg-[var(--bg-sidebar)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Why GittoGather?</h2>
+            <h2 className="text-[var(--primary-light)] font-semibold tracking-wide uppercase text-sm mb-2">Why GittoGether?</h2>
             <h3 className="text-3xl md:text-4xl font-bold text-[var(--text-white)]">Everything you need to ship.</h3>
           </div>
 
@@ -258,9 +258,9 @@ export default function LandingPage() {
               <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
                 <i data-lucide="cpu" style={{ width: 20 }}></i>
               </div>
-              <span className="font-bold text-xl text-[var(--text-white)]">GittoGather</span>
+              <span className="font-bold text-xl text-[var(--text-white)]">GittoGether</span>
             </div>
-            <div className="text-[var(--text-dim)] text-sm">&copy; 2024 GittoGather. Built for builders.</div>
+            <div className="text-[var(--text-dim)] text-sm">&copy; 2024 GittoGether. Built for builders.</div>
           </div>
         </div>
       </footer>
