@@ -135,7 +135,7 @@ export default function LandingPage() {
             The ultimate platform for students to find teammates for hackathons, capstone projects, and coding clubs. Connect based on skills, not just majors.
           </p>
 
-          <div className="btn btn-outline text-lg px-8">
+          <div className="mt-10 flex justify-center gap-4">
             <a href="#" onClick={handleGoogleAuth} className="btn btn-outline text-lg px-8">
               Find a Team
             </a>
