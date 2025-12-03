@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/useAuth"
+import { normalizeExternalUrl } from "@/lib/utils"
 
 interface ProfilePageProps {
   onBack: () => void
@@ -306,14 +307,14 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                         placeholder="https://linkedin.com/in/yourprofile"
                         className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                       />
-                    ) : profileData.linkedin ? (
+                    ) : normalizeExternalUrl(profileData.linkedin) ? (
                       <a
-                        href={profileData.linkedin}
+                        href={normalizeExternalUrl(profileData.linkedin) ?? undefined}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-accent hover:text-accent/80 break-all"
                       >
-                        {profileData.linkedin}
+                        {normalizeExternalUrl(profileData.linkedin)}
                       </a>
                     ) : (
                       <p className="text-muted-foreground italic">Not provided</p>
@@ -335,14 +336,14 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                         placeholder="https://github.com/yourprofile"
                         className="bg-input border-border text-foreground placeholder:text-muted-foreground"
                       />
-                    ) : profileData.github ? (
+                    ) : normalizeExternalUrl(profileData.github) ? (
                       <a
-                        href={profileData.github}
+                        href={normalizeExternalUrl(profileData.github) ?? undefined}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-accent hover:text-accent/80 break-all"
                       >
-                        {profileData.github}
+                        {normalizeExternalUrl(profileData.github)}
                       </a>
                     ) : (
                       <p className="text-muted-foreground italic">Not provided</p>

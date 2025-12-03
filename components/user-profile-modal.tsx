@@ -6,6 +6,7 @@ import { ProfileAvatar } from "@/components/profile-avatar"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { api } from "@/lib/api"
+import { normalizeExternalUrl } from "@/lib/utils"
 
 interface SkillSummary {
   id: number
@@ -207,7 +208,9 @@ interface ContactCardProps {
 }
 
 function ContactCard({ icon, label, href }: ContactCardProps) {
-  if (!href) {
+  const safeHref = normalizeExternalUrl(href)
+
+  if (!safeHref) {
     return (
       <div className="flex items-center gap-3 rounded-xl border border-dashed border-border/60 bg-muted/10 p-4 text-sm text-muted-foreground">
         <span className="rounded-full bg-muted/40 p-2 text-muted-foreground">{icon}</span>
@@ -221,7 +224,7 @@ function ContactCard({ icon, label, href }: ContactCardProps) {
 
   return (
     <a
-      href={href}
+      href={safeHref}
       target="_blank"
       rel="noopener noreferrer"
       className="flex items-center gap-3 rounded-xl border border-border bg-secondary/20 p-4 text-sm text-foreground transition hover:border-primary/60 hover:bg-secondary/40"
@@ -229,7 +232,7 @@ function ContactCard({ icon, label, href }: ContactCardProps) {
       <span className="rounded-full bg-primary/20 p-2 text-primary">{icon}</span>
       <div className="min-w-0">
         <p className="font-medium">{label}</p>
-        <p className="truncate text-xs text-muted-foreground">{href}</p>
+        <p className="truncate text-xs text-muted-foreground">{safeHref}</p>
       </div>
     </a>
   )
