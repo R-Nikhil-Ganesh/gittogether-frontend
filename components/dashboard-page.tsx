@@ -12,7 +12,6 @@ interface DashboardPageProps {
   onNavigateToFindTeam: () => void
   onNavigateToPostTeam: () => void
   onNavigateToTeams: () => void
-  onNavigateToAdmin?: () => void
 }
 
 export default function DashboardPage({
@@ -22,17 +21,10 @@ export default function DashboardPage({
   onNavigateToFindTeam,
   onNavigateToPostTeam,
   onNavigateToTeams,
-  onNavigateToAdmin,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const { logout, user } = useAuth()
-
-  const isAdmin = Boolean(user?.email && [
-    "310624104028@eec.srmrmp.edu.in",
-    "310624104210@eec.srmrmp.edu.in",
-    "310624244058@eec.srmrmp.edu.in",
-  ].includes(user.email.toLowerCase()))
+  const { logout } = useAuth()
 
   const handleSignOut = () => {
     logout()
@@ -90,18 +82,10 @@ export default function DashboardPage({
               </button>
               <button
                 onClick={onNavigateToTeams}
-                className="px-4 py-2 text-sm rounded-lg bg-secondary/20 text-foreground border border-border hover:border-primary transition"
+                className="px-4 py-2 text-sm rounded-lg bg-secondary/10 text-secondary border border-secondary/30 hover:bg-secondary/20 transition"
               >
                 My Teams & Chat
               </button>
-              {isAdmin && onNavigateToAdmin && (
-                <button
-                  onClick={onNavigateToAdmin}
-                  className="px-4 py-2 text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
-                >
-                  Admin Dashboard
-                </button>
-              )}
             </div>
 
             {/* Two Path Options */}
@@ -113,7 +97,7 @@ export default function DashboardPage({
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary border border-primary/30 group-hover:bg-primary/20">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary group-hover:bg-primary/20">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
@@ -136,7 +120,7 @@ export default function DashboardPage({
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
-                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-accent/10 text-accent border border-accent/30 group-hover:bg-accent/20">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-accent/10 text-accent group-hover:bg-accent/20">
                     <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                         strokeLinecap="round"
