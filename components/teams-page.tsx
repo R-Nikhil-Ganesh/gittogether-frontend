@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import PageHeader from "@/components/page-header"
+import { TeamEditorModal } from "@/components/team-editor-modal"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { api } from "@/lib/api"
@@ -51,6 +52,8 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
   const [teams, setTeams] = useState<TeamSummary[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [editorTeamId, setEditorTeamId] = useState<number | null>(null)
+  const [isEditorOpen, setIsEditorOpen] = useState(false)
 
   const fetchTeams = useCallback(async () => {
     try {
@@ -72,6 +75,11 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
   useEffect(() => {
     fetchTeams()
   }, [fetchTeams])
+
+  const openEditor = (teamId: number) => {
+    setEditorTeamId(teamId)
+    setIsEditorOpen(true)
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -140,10 +148,18 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
                   )}
                 </div>
 
-                <div className="mt-4 flex items-center justify-between">
-                  <Button variant="outline" onClick={fetchTeams} className="text-sm">
-                    Refresh
-                  </Button>
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex gap-2">
+                    {team.role === "owner" && (
+                      <Button
+                        type="button"
+                        className="border border-primary/50 bg-blue-900/30 text-blue-100 text-sm hover:bg-blue-900/40"
+                        onClick={() => openEditor(team.id)}
+                      >
+                        Edit Details
+                      </Button>
+                    )}
+                  </div>
                   <Button onClick={() => onSelectTeam(team.id)} className="text-sm">
                     Open Team Chat
                   </Button>
@@ -153,6 +169,15 @@ export default function TeamsPage({ onBack, onNavigateToProfile, onSelectTeam }:
           </div>
         )}
       </div>
+      <TeamEditorModal
+        teamId={editorTeamId}
+        open={isEditorOpen}
+        onClose={() => {
+          setIsEditorOpen(false)
+          setEditorTeamId(null)
+        }}
+        onSuccess={fetchTeams}
+      />
     </div>
   )
 }
