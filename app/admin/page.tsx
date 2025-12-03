@@ -30,7 +30,9 @@ export default function AdminPage() {
   const [summary, setSummary] = useState<AdminSummary | null>(null)
   const [users, setUsers] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [pageError, setPageError] = useState<string | null>(null)
+  const [info, setInfo] = useState<string | null>(null)
+  const [tableError, setTableError] = useState<string | null>(null)
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null)
 
   const isAdmin = useMemo(() => {
@@ -49,7 +51,7 @@ export default function AdminPage() {
     }
 
     if (!isAdmin) {
-      setError("You do not have access to the admin dashboard.")
+      setPageError("You do not have access to the admin dashboard.")
       setLoading(false)
       return
     }
@@ -65,7 +67,7 @@ export default function AdminPage() {
         setUsers(usersData)
       } catch (err) {
         console.error("Failed to load admin data", err)
-        setError("Unable to load admin data. Please try again later.")
+        setPageError("Unable to load admin data. Please try again later.")
       } finally {
         setLoading(false)
       }
@@ -74,14 +76,37 @@ export default function AdminPage() {
     loadAdminData()
   }, [isAdmin, isLoading, router, user])
 
+  const refreshSummary = async () => {
+    try {
+      const summaryData = await api.getAdminSummary()
+      setSummary(summaryData)
+    } catch (err) {
+      console.error("Failed to refresh admin summary", err)
+    }
+  }
+
   const handleToggleUser = async (userId: number, isActive: boolean) => {
+    const targetUser = users.find((u) => u.id === userId)
+    setInfo(null)
+    setTableError(null)
     try {
       setUpdatingUserId(userId)
-      const updated = await api.updateAdminUserStatus(userId, !isActive)
-      setUsers((prev) => prev.map((u) => (u.id === userId ? updated : u)))
+      const result = await api.updateAdminUserStatus(userId, !isActive)
+
+      if (result?.deleted) {
+        setUsers((prev) => prev.filter((u) => u.id !== userId))
+        setInfo(`${targetUser?.name ?? "User"} was removed from the platform.`)
+        setTableError(null)
+      } else if (result?.user) {
+        setUsers((prev) => prev.map((u) => (u.id === userId ? result.user : u)))
+        setInfo(`${result.user.name} is now active.`)
+        setTableError(null)
+      }
+
+      await refreshSummary()
     } catch (err) {
       console.error("Failed to update user", err)
-      setError("Unable to update user status. Please try again.")
+      setTableError("Unable to update user status. Please try again.")
     } finally {
       setUpdatingUserId(null)
     }
@@ -96,12 +121,12 @@ export default function AdminPage() {
     )
   }
 
-  if (error) {
+  if (pageError) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Card className="max-w-md w-full border border-border p-6 text-center space-y-4">
           <h1 className="text-2xl font-semibold text-foreground">Admin Portal</h1>
-          <p className="text-muted-foreground">{error}</p>
+          <p className="text-muted-foreground">{pageError}</p>
           <Button onClick={() => router.push("/dashboard")}>Back to Dashboard</Button>
         </Card>
       </div>
@@ -212,6 +237,16 @@ export default function AdminPage() {
               <p className="text-sm text-muted-foreground">Activate or deactivate accounts</p>
             </div>
           </div>
+          {info && (
+            <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
+              {info}
+            </div>
+          )}
+          {tableError && (
+            <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              {tableError}
+            </div>
+          )}
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
