@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { ProfileAvatar } from "@/components/profile-avatar"
 import { useAuth } from "@/lib/useAuth"
 
 interface ProfileHeaderProps {
@@ -40,16 +41,12 @@ export default function ProfileHeader({ onNavigateToProfile, onSignOut }: Profil
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
         {/* Profile Avatar */}
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary flex items-center justify-center text-primary font-semibold hover:bg-primary/30 transition">
-            {user?.name ? user.name.charAt(0).toUpperCase() : <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>}
-          </div>
+          <ProfileAvatar
+            name={user?.name}
+            imageUrl={user?.profile_picture}
+            size="md"
+            className="border border-primary/50"
+          />
           <div className="text-left min-w-[120px]">
             <p className="text-sm font-medium text-foreground leading-none">{user?.name ?? 'Loading user'}</p>
             <p className="text-xs text-muted-foreground truncate">{user?.email ?? ''}</p>
