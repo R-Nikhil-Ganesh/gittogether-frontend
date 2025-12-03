@@ -174,4 +174,13 @@ export const api = {
   getDashboardSummary: () => apiCall('/dashboard/summary'),
   getDashboardActivity: () => apiCall('/dashboard/activity'),
   getDashboardNotifications: () => apiCall('/dashboard/notifications'),
+
+  // Admin
+  getAdminSummary: () => apiCall('/admin/summary'),
+  getAdminUsers: () => apiCall('/admin/users'),
+  updateAdminUserStatus: (userId: number, isActive: boolean) =>
+    apiCall(`/admin/users/${userId}/status`, {
+      method: 'PATCH',
+      body: JSON.stringify({ is_active: isActive }),
+    }),
 }

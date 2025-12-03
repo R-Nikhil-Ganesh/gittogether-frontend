@@ -12,6 +12,7 @@ interface DashboardPageProps {
   onNavigateToFindTeam: () => void
   onNavigateToPostTeam: () => void
   onNavigateToTeams: () => void
+  onNavigateToAdmin?: () => void
 }
 
 export default function DashboardPage({
@@ -21,10 +22,17 @@ export default function DashboardPage({
   onNavigateToFindTeam,
   onNavigateToPostTeam,
   onNavigateToTeams,
+  onNavigateToAdmin,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const { logout } = useAuth()
+  const { logout, user } = useAuth()
+
+  const isAdmin = Boolean(user?.email && [
+    "310624104028@eec.srmrmp.edu.in",
+    "310624104210@eec.srmrmp.edu.in",
+    "310624244058@eec.srmrmp.edu.in",
+  ].includes(user.email.toLowerCase()))
 
   const handleSignOut = () => {
     logout()
@@ -86,6 +94,14 @@ export default function DashboardPage({
               >
                 My Teams & Chat
               </button>
+              {isAdmin && onNavigateToAdmin && (
+                <button
+                  onClick={onNavigateToAdmin}
+                  className="px-4 py-2 text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
+                >
+                  Admin Dashboard
+                </button>
+              )}
             </div>
 
             {/* Two Path Options */}
