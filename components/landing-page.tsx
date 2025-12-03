@@ -109,7 +109,6 @@ export default function LandingPage() {
             </div>
 
             <div className="flex items-center gap-4">
-              <a href="#" className="hidden md:block nav-link text-sm">Log in</a>
               <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-sm">
                 Get Started
                 <i data-lucide="arrow-right" style={{ width: 16 }} className="ml-2"></i>
