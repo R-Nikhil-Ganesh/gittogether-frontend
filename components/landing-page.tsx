@@ -99,9 +99,6 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
-                <i data-lucide="cpu" style={{ width: 20 }}></i>
-              </div>
               <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GitTogether</span>
             </div>
 
@@ -139,7 +136,7 @@ export default function LandingPage() {
             The ultimate platform for students to find teammates for hackathons, capstone projects, and coding clubs. Connect based on skills, not just majors.
           </p>
 
-          <div className="mt-10 flex justify-center gap-4">
+          <div className="btn btn-outline text-lg px-8">
             <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-lg px-8">
               Find a Team
             </a>
@@ -278,46 +275,18 @@ export default function LandingPage() {
         <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-main)] to-[var(--primary-deep)] opacity-50"></div>
         <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-extrabold text-[var(--text-white)] mb-6">Ready to build something amazing?</h2>
-          <p className="text-xl text-[var(--text-muted)] mb-10 max-w-2xl mx-auto">Join 1,200+ students building the future. It's free, open-source, and designed for you.</p>
+          <p className="text-xl text-[var(--text-muted)] mb-10 max-w-2xl mx-auto"> Join the Student communtiy. It's free and designed for you to connect with peoples with same mind and share your views.</p>
         </div>
       </section>
-
-      {/* Stats Section */}
-      <section className="py-20 border-y border-[var(--border-light)] bg-[var(--bg-main)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold text-[var(--text-white)] mb-2">500+</div>
-              <div className="text-sm text-[var(--text-muted)] uppercase tracking-wide">Projects Created</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-[var(--text-white)] mb-2">1.2k</div>
-              <div className="text-sm text-[var(--text-muted)] uppercase tracking-wide">Active Students</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-[var(--text-white)] mb-2">50+</div>
-              <div className="text-sm text-[var(--text-muted)] uppercase tracking-wide">Universities</div>
-            </div>
-            <div>
-              <div className="text-4xl font-bold text-[var(--text-white)] mb-2">24h</div>
-              <div className="text-sm text-[var(--text-muted)] uppercase tracking-wide">Avg. Team Fill Time</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       
       {/* Footer */}
       <footer className="bg-[var(--bg-sidebar)] pt-16 pb-8 border-t border-[var(--border-dark)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="flex items-center gap-2 mb-4 md:mb-0">
-              <div className="w-8 h-8 rounded-lg bg-[var(--primary)] flex items-center justify-center text-white">
-                <i data-lucide="cpu" style={{ width: 20 }}></i>
-              </div>
               <span className="font-bold text-xl text-[var(--text-white)]">GitTogether</span>
             </div>
-            <div className="text-[var(--text-dim)] text-sm">&copy; 2024 GitTogether. Built for builders.</div>
+            <div className="text-[var(--text-dim)] text-sm">2024 GitTogether. Built for builders.</div>
           </div>
         </div>
       </footer>
