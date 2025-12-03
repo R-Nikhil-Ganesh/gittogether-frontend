@@ -94,7 +94,7 @@ export default function DashboardPage({
               </button>
               <button
                 onClick={onNavigateToTeams}
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-secondary/20 text-foreground border border-border hover:border-primary transition"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
               >
                 <span className="hidden sm:inline">My Teams & Chat</span>
                 <span className="sm:hidden">Teams</span>
