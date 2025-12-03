@@ -24,7 +24,7 @@ export default function CallbackPage() {
         localStorage.setItem('access_token', token)
         
         // Fetch user information using the token
-        const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8000/api/v1').replace(/\/+$/, '')
+        const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://gittogether-backend-7p59.onrender.com/api/v1').replace(/\/+$/, '')
         const response = await fetch(`${apiBase}/auth/me`, {
           headers: {
             'Authorization': `Bearer ${token}`,
