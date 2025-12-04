@@ -17,6 +17,7 @@ interface User {
   google_id: string
   profile_picture?: string | null
   bio?: string | null
+  roll_number?: string | null
   department?: string | null
   year?: string | null
   linkedin?: string | null

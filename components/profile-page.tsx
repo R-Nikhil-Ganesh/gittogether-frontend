@@ -22,6 +22,7 @@ interface ProfileForm {
   email: string
   profile_picture: string
   bio: string
+  roll_number: string
   department: string
   year: string
   linkedin: string
@@ -33,6 +34,7 @@ const emptyProfile: ProfileForm = {
   email: "",
   profile_picture: "",
   bio: "",
+  roll_number: "",
   department: "",
   year: "",
   linkedin: "",
@@ -44,6 +46,7 @@ const mapProfileToForm = (profile: any): ProfileForm => ({
   email: profile?.email ?? "",
   profile_picture: profile?.profile_picture ?? "",
   bio: profile?.bio ?? "",
+  roll_number: profile?.roll_number ?? "",
   department: profile?.department ?? "",
   year: profile?.year ?? "",
   linkedin: profile?.linkedin ?? "",
@@ -126,10 +129,6 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
       }
 
       const payload = {
-        name: editData.name,
-        bio: editData.bio || null,
-        department: editData.department || null,
-        year: editData.year || null,
         linkedin: editData.linkedin || null,
         github: editData.github || null,
       }
@@ -194,6 +193,12 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                   )}
                 </div>
 
+                {isEditing && (
+                  <p className="text-sm text-muted-foreground">
+                    You can update your profile picture and social links. Other details come from your campus records.
+                  </p>
+                )}
+
                 <div className="flex flex-col items-center gap-4">
                   {isEditing ? (
                     <div className="flex flex-col items-center gap-4">
@@ -239,53 +244,30 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                   </div>
 
                   <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground">Roll Number</label>
+                    <p className="text-foreground">{profileData.roll_number || 'Not provided'}</p>
+                  </div>
+
+                  <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Email</label>
                     <p className="text-foreground">{profileData.email}</p>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Department</label>
-                    {isEditing ? (
-                      <Input
-                        value={editData.department}
-                        onChange={(e) => handleInputChange('department', e.target.value)}
-                        placeholder="e.g., Computer Science"
-                        className="bg-input border-border text-foreground placeholder:text-muted-foreground"
-                      />
-                    ) : (
-                      <p className="text-foreground">{profileData.department || 'Not provided'}</p>
-                    )}
+                    <p className="text-foreground">{profileData.department || 'Not provided'}</p>
                   </div>
 
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Year</label>
-                    {isEditing ? (
-                      <Input
-                        value={editData.year}
-                        onChange={(e) => handleInputChange('year', e.target.value)}
-                        placeholder="e.g., 3rd Year"
-                        className="bg-input border-border text-foreground placeholder:text-muted-foreground"
-                      />
-                    ) : (
-                      <p className="text-foreground">{profileData.year || 'Not provided'}</p>
-                    )}
+                    <label className="text-sm font-medium text-foreground">Batch (Academic Year)</label>
+                    <p className="text-foreground">{profileData.year || 'Not provided'}</p>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Bio</label>
-                    {isEditing ? (
-                      <textarea
-                        value={editData.bio}
-                        onChange={(e) => handleInputChange('bio', e.target.value)}
-                        rows={4}
-                        className="w-full rounded-md bg-input border border-border px-3 py-2 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary"
-                        placeholder="Tell others about your interests and experience"
-                      />
-                    ) : (
-                      <p className="text-foreground leading-relaxed">
-                        {profileData.bio || 'No bio provided yet.'}
-                      </p>
-                    )}
+                    <p className="text-foreground leading-relaxed">
+                      {profileData.bio || 'No bio provided yet.'}
+                    </p>
                   </div>
                 </div>
 
