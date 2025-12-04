@@ -218,4 +218,33 @@ export const api = {
     apiCall(`/admin/posts/${postId}`, {
       method: 'DELETE',
     }),
+
+  // Friends
+  getFriends: () => apiCall('/friends/'),
+  searchFriends: (query: string, limit = 20) =>
+    apiCall(`/friends/search${buildQueryString({ query, limit })}`),
+  sendFriendRequest: (payload: { target_user_id: number; message?: string }) =>
+    apiCall('/friends/requests', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  getFriendRequests: () => apiCall('/friends/requests'),
+  acceptFriendRequest: (requestId: number) =>
+    apiCall(`/friends/requests/${requestId}/accept`, {
+      method: 'POST',
+    }),
+  rejectFriendRequest: (requestId: number) =>
+    apiCall(`/friends/requests/${requestId}/reject`, {
+      method: 'POST',
+    }),
+  cancelFriendRequest: (requestId: number) =>
+    apiCall(`/friends/requests/${requestId}`, {
+      method: 'DELETE',
+    }),
+  getFriendMessages: (friendId: number) => apiCall(`/friends/${friendId}/messages`),
+  sendFriendMessage: (friendId: number, content: string) =>
+    apiCall(`/friends/${friendId}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    }),
 }

@@ -12,6 +12,7 @@ interface DashboardPageProps {
   onNavigateToFindTeam: () => void
   onNavigateToPostTeam: () => void
   onNavigateToTeams: () => void
+  onNavigateToFriends: () => void
   onNavigateToAdmin?: () => void
 }
 
@@ -22,6 +23,7 @@ export default function DashboardPage({
   onNavigateToFindTeam,
   onNavigateToPostTeam,
   onNavigateToTeams,
+  onNavigateToFriends,
   onNavigateToAdmin,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -99,10 +101,17 @@ export default function DashboardPage({
                 <span className="hidden sm:inline">My Teams & Chat</span>
                 <span className="sm:hidden">Teams</span>
               </button>
+              <button
+                onClick={onNavigateToFriends}
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
+              >
+                <span className="hidden sm:inline">Friends & Messages</span>
+                <span className="sm:hidden">Friends</span>
+              </button>
               {isAdmin && onNavigateToAdmin && (
                 <button
                   onClick={onNavigateToAdmin}
-                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/30 hover:bg-purple-500/20 transition"
                 >
                   <span className="hidden sm:inline">Admin Dashboard</span>
                   <span className="sm:hidden">Admin</span>
