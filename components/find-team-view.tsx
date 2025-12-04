@@ -43,6 +43,23 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
   useEffect(() => {
     fetchTeamPosts()
     fetchAppliedPosts()
+    if (typeof window === "undefined") {
+      return
+    }
+
+    const handleWithdrawn = (event: Event) => {
+      const customEvent = event as CustomEvent<{ postId?: number }>
+      const postId = customEvent.detail?.postId
+      if (typeof postId === "number") {
+        setAppliedIds((prev) => prev.filter((id) => id !== postId))
+      }
+    }
+
+    window.addEventListener("team-request-withdrawn", handleWithdrawn as EventListener)
+
+    return () => {
+      window.removeEventListener("team-request-withdrawn", handleWithdrawn as EventListener)
+    }
   }, [])
 
   const fetchTeamPosts = async () => {
@@ -62,7 +79,12 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
     try {
       const requests = await api.getMyRequests()
       if (Array.isArray(requests)) {
-        setAppliedIds(requests.map((req: any) => req.post_id))
+        const activePostIds = requests
+          .filter((req: any) => req?.status === "pending" || req?.status === "accepted")
+          .map((req: any) => (typeof req?.post_id === "number" ? req.post_id : req?.post?.id))
+          .filter((id: unknown): id is number => typeof id === "number")
+
+        setAppliedIds(activePostIds)
       }
     } catch (err) {
       console.error('Error fetching applied posts:', err)
@@ -99,7 +121,8 @@ export default function FindTeamView({ onBack, onNavigateToProfile }: FindTeamVi
       await api.createTeamRequest(postId, 'I would like to join this team!')
       setAppliedIds((prev) => [...prev, postId])
     } catch (err) {
-      setError('Failed to send team request')
+      const fallback = 'Failed to send team request'
+      setError(err instanceof Error && err.message ? err.message : fallback)
       console.error('Error creating team request:', err)
     }
   }

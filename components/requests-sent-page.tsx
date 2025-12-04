@@ -86,6 +86,7 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
   const handleWithdraw = async (requestId: number) => {
     setError(null)
     setWithdrawingId(requestId)
+    const targetRequest = requestsSent.find((req) => req.id === requestId)
     try {
       await api.withdrawTeamRequest(requestId)
       setRequestsSent((prev) =>
@@ -93,6 +94,13 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
           request.id === requestId ? { ...request, status: "withdrawn" } : request
         )
       )
+      if (targetRequest?.post?.id && typeof window !== "undefined") {
+        window.dispatchEvent(
+          new CustomEvent("team-request-withdrawn", {
+            detail: { postId: targetRequest.post.id }
+          })
+        )
+      }
     } catch (err) {
       console.error("Error withdrawing request:", err)
       setError(err instanceof Error ? err.message : "Failed to withdraw request")
