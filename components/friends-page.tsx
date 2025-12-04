@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
 
 import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
@@ -71,6 +71,7 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
   const [info, setInfo] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [chatError, setChatError] = useState<string | null>(null)
+  const [profilePreview, setProfilePreview] = useState<FriendSearchResult | null>(null)
 
   const selectedFriend = useMemo(() => friends.find((f) => f.id === selectedFriendId) ?? null, [friends, selectedFriendId])
 
@@ -152,11 +153,27 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
       setError(null)
       await api.sendFriendRequest({ target_user_id: targetId })
       setInfo("Friend request sent")
+      setSearchResults((previous) =>
+        previous.map((result) =>
+          result.user.id === targetId ? { ...result, relationship_status: "pending_outgoing" } : result
+        )
+      )
+      setProfilePreview((previous) =>
+        previous && previous.user.id === targetId ? { ...previous, relationship_status: "pending_outgoing" } : previous
+      )
       await Promise.all([loadRequests(), loadFriends()])
     } catch (err) {
       console.error("Failed to send friend request", err)
       setError(err instanceof Error ? err.message : "Unable to send friend request")
     }
+  }
+
+  const openProfilePreview = (result: FriendSearchResult) => {
+    setProfilePreview(result)
+  }
+
+  const closeProfilePreview = () => {
+    setProfilePreview(null)
   }
 
   const handleAcceptRequest = async (requestId: number) => {
@@ -214,6 +231,13 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
       setChatError(err instanceof Error ? err.message : "Unable to send message")
     } finally {
       setMessageLoading(false)
+    }
+  }
+
+  const handleResultKeyDown = (event: KeyboardEvent<HTMLDivElement>, result: FriendSearchResult) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault()
+      openProfilePreview(result)
     }
   }
 
@@ -276,19 +300,43 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
           {!searchLoading && searchResults.length > 0 && (
             <div className="grid sm:grid-cols-2 gap-3">
               {searchResults.map((result) => (
-                <div key={result.user.id} className="flex items-center justify-between gap-3 rounded-md border border-border px-3 py-3 bg-background/40">
-                  <div>
+                <div
+                  key={result.user.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => openProfilePreview(result)}
+                  onKeyDown={(event) => handleResultKeyDown(event, result)}
+                  className="flex items-start justify-between gap-3 rounded-md border border-border px-3 py-3 bg-background/40 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                >
+                  <div className="flex-1 space-y-1">
                     <p className="text-sm font-medium text-foreground">{result.user.name}</p>
-                    <p className="text-xs text-muted-foreground">{result.user.email}</p>
+                    <p className="text-xs text-muted-foreground break-all">{result.user.email}</p>
+                    {result.user.bio && <p className="text-xs text-muted-foreground">{result.user.bio}</p>}
+                    <p className="text-[11px] uppercase tracking-wide text-muted-foreground/80">Click to preview profile</p>
                   </div>
-                  <Button
-                    size="sm"
-                    variant={canAddFriend(result.relationship_status) ? "default" : "outline"}
-                    disabled={!canAddFriend(result.relationship_status)}
-                    onClick={() => handleSendFriendRequest(result.user.id)}
-                  >
-                    {relationshipLabel(result.relationship_status)}
-                  </Button>
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      size="sm"
+                      variant={canAddFriend(result.relationship_status) ? "default" : "outline"}
+                      disabled={!canAddFriend(result.relationship_status)}
+                      onClick={(event: MouseEvent<HTMLButtonElement>) => {
+                        event.stopPropagation()
+                        handleSendFriendRequest(result.user.id)
+                      }}
+                    >
+                      {relationshipLabel(result.relationship_status)}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={(event) => {
+                        event.stopPropagation()
+                        openProfilePreview(result)
+                      }}
+                    >
+                      View profile
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -428,6 +476,66 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
           )}
         </Card>
       </main>
+
+      {profilePreview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-10"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="profile-preview-title"
+          onClick={closeProfilePreview}
+        >
+          <div className="relative w-full max-w-lg" onClick={(event) => event.stopPropagation()}>
+            <Card className="border border-border bg-card p-6 shadow-2xl space-y-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-4">
+                  {profilePreview.user.profile_picture ? (
+                    <img
+                      src={profilePreview.user.profile_picture}
+                      alt={profilePreview.user.name}
+                      className="h-16 w-16 rounded-full border border-border object-cover"
+                    />
+                  ) : (
+                    <div className="h-16 w-16 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center text-xl font-semibold">
+                      {profilePreview.user.name ? profilePreview.user.name.charAt(0).toUpperCase() : "?"}
+                    </div>
+                  )}
+                  <div>
+                    <h2 id="profile-preview-title" className="text-xl font-semibold text-foreground">
+                      {profilePreview.user.name}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">{profilePreview.user.email}</p>
+                    {profilePreview.user.bio && <p className="text-sm text-muted-foreground mt-2">{profilePreview.user.bio}</p>}
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={closeProfilePreview} aria-label="Close profile preview">
+                  X
+                </Button>
+              </div>
+
+              <div className="rounded-md border border-border bg-background/60 px-4 py-3 text-xs text-muted-foreground">
+                {profilePreview.relationship_status === "friend" && "You're already connected."}
+                {profilePreview.relationship_status === "pending_outgoing" && "Request sent. Waiting for them to respond."}
+                {profilePreview.relationship_status === "pending_incoming" && "They requested you. Respond in the requests panel."}
+                {profilePreview.relationship_status === "self" && "This is you."}
+                {profilePreview.relationship_status === "none" && "Send a request to open a 24-hour chat window."}
+              </div>
+
+              <div className="flex flex-wrap justify-end gap-2">
+                <Button variant="outline" onClick={closeProfilePreview}>
+                  Close
+                </Button>
+                <Button
+                  disabled={!canAddFriend(profilePreview.relationship_status)}
+                  onClick={() => handleSendFriendRequest(profilePreview.user.id)}
+                >
+                  {relationshipLabel(profilePreview.relationship_status)}
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
