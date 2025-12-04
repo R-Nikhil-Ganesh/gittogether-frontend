@@ -81,15 +81,15 @@ export default function DashboardPage({
                 className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 transition"
               >
                 <span className="hidden sm:inline">Requests Sent</span>
-                <span className="sm:hidden">Sent</span>
+                <span className="sm:hidden">Requests</span>
                 {dashboardData?.pending_sent_requests ? ` (${dashboardData.pending_sent_requests})` : ""}
               </button>
               <button
                 onClick={onNavigateToMyRequests}
                 className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 transition"
               >
-                <span className="hidden sm:inline">My Requests</span>
-                <span className="sm:hidden">Received</span>
+                <span className="hidden sm:inline">My Posts</span>
+                <span className="sm:hidden">Posts</span>
                 {dashboardData?.pending_received_requests ? ` (${dashboardData.pending_received_requests})` : ""}
               </button>
               <button
