@@ -22,6 +22,7 @@ interface User {
   year?: string | null
   linkedin?: string | null
   github?: string | null
+  leetcode?: string | null
   skills?: UserSkill[]
   created_at?: string
 }

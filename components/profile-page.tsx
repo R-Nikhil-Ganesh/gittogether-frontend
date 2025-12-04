@@ -27,6 +27,7 @@ interface ProfileForm {
   year: string
   linkedin: string
   github: string
+  leetcode: string
 }
 
 const emptyProfile: ProfileForm = {
@@ -39,6 +40,7 @@ const emptyProfile: ProfileForm = {
   year: "",
   linkedin: "",
   github: "",
+  leetcode: "",
 }
 
 const mapProfileToForm = (profile: any): ProfileForm => ({
@@ -51,6 +53,7 @@ const mapProfileToForm = (profile: any): ProfileForm => ({
   year: profile?.year ?? "",
   linkedin: profile?.linkedin ?? "",
   github: profile?.github ?? "",
+  leetcode: profile?.leetcode ?? "",
 })
 
 export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePageProps) {
@@ -129,8 +132,10 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
       }
 
       const payload = {
+        bio: editData.bio || null,
         linkedin: editData.linkedin || null,
         github: editData.github || null,
+        leetcode: editData.leetcode || null,
       }
 
       const updatedProfile = await api.updateProfile(payload)
@@ -195,7 +200,7 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
 
                 {isEditing && (
                   <p className="text-sm text-muted-foreground">
-                    You can update your profile picture and social links. Other details come from your campus records.
+                    You can update your profile picture, bio, and social links. Other details come from your campus records.
                   </p>
                 )}
 
@@ -265,9 +270,19 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
 
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Bio</label>
-                    <p className="text-foreground leading-relaxed">
-                      {profileData.bio || 'No bio provided yet.'}
-                    </p>
+                    {isEditing ? (
+                      <textarea
+                        value={editData.bio}
+                        onChange={(e) => handleInputChange('bio', e.target.value)}
+                        rows={4}
+                        className="w-full rounded-md bg-input border border-border px-3 py-2 text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                        placeholder="Tell others about your interests and experience"
+                      />
+                    ) : (
+                      <p className="text-foreground leading-relaxed">
+                        {profileData.bio || 'No bio provided yet.'}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -326,6 +341,35 @@ export default function ProfilePage({ onBack, onNavigateToProfile }: ProfilePage
                         className="text-accent hover:text-accent/80 break-all"
                       >
                         {normalizeExternalUrl(profileData.github)}
+                      </a>
+                    ) : (
+                      <p className="text-muted-foreground italic">Not provided</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-foreground flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm11.57 4.93-2.21 3.91 2.42 4.3h-2.42L11 13.16l-2.36 4h-2.41l2.4-4.3-2.2-3.93h2.4l1.98 3.48 2-3.48z" />
+                      </svg>
+                      LeetCode
+                    </label>
+                    {isEditing ? (
+                      <Input
+                        type="url"
+                        value={editData.leetcode}
+                        onChange={(e) => handleInputChange('leetcode', e.target.value)}
+                        placeholder="https://leetcode.com/yourhandle"
+                        className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                      />
+                    ) : normalizeExternalUrl(profileData.leetcode) ? (
+                      <a
+                        href={normalizeExternalUrl(profileData.leetcode) ?? undefined}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-accent hover:text-accent/80 break-all"
+                      >
+                        {normalizeExternalUrl(profileData.leetcode)}
                       </a>
                     ) : (
                       <p className="text-muted-foreground italic">Not provided</p>
