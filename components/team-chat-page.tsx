@@ -152,11 +152,12 @@ export default function TeamChatPage({ teamId, onBack, onNavigateToProfile }: Te
   const formatTimestamp = useMemo(
     () => (isoString: string) => {
       const date = new Date(isoString)
-      return date.toLocaleString(undefined, {
+      return date.toLocaleString('en-IN', {
         hour: "2-digit",
         minute: "2-digit",
         month: "short",
         day: "numeric",
+        timeZone: 'Asia/Kolkata'
       })
     },
     []
