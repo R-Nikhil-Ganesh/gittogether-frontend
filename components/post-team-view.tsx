@@ -103,6 +103,11 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
       return
     }
 
+    if (maxMembers < 2) {
+      setError('Team size must include you and at least one teammate (minimum 2 members).')
+      return
+    }
+
     setLoading(true)
     setError(null)
 
@@ -129,7 +134,9 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
       alert("Team request posted successfully!")
       onBack()
     } catch (err) {
-      setError('Failed to post team request. Please try again.')
+      const fallback = 'Failed to post team request. Please try again.'
+      const message = err instanceof Error && err.message ? err.message : fallback
+      setError(message)
       console.error('Error creating team post:', err)
     } finally {
       setLoading(false)
@@ -194,6 +201,9 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
                 className="bg-input border-border text-foreground"
               />
               <p className="text-xs text-muted-foreground">Include yourself when choosing the maximum team size.</p>
+              {maxMembers < 2 && (
+                <p className="text-xs text-destructive">Minimum team size is 2 (you + at least one teammate).</p>
+              )}
             </div>
 
             {/* Project Description */}
@@ -325,7 +335,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
                   !title ||
                   !description ||
                   (selectedSkillIds.length === 0 && customSkillNames.length === 0) ||
-                  maxMembers < 1
+                  maxMembers < 2
                 }
                 className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground disabled:opacity-50"
               >

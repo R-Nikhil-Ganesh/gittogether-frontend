@@ -56,6 +56,34 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
 
   if (!response.ok) {
     const errorPayload = await parseJsonSafe(response)
+    let errorMessage = response.statusText
+
+    if (typeof errorPayload === 'string' && errorPayload.trim()) {
+      errorMessage = errorPayload
+    } else if (errorPayload && typeof errorPayload === 'object') {
+      const detail = (errorPayload as Record<string, unknown>)['detail']
+
+      if (typeof detail === 'string' && detail.trim()) {
+        errorMessage = detail
+      } else if (Array.isArray(detail)) {
+        const messages = detail
+          .map((item) => {
+            if (typeof item === 'string') {
+              return item
+            }
+            if (item && typeof item === 'object' && 'msg' in item && typeof item.msg === 'string') {
+              return item.msg
+            }
+            return null
+          })
+          .filter((msg): msg is string => Boolean(msg && msg.trim()))
+
+        if (messages.length > 0) {
+          errorMessage = messages.join('\n')
+        }
+      }
+    }
+
     console.error('API call failed:', response.status, response.statusText, 'URL:', fullUrl, 'Payload:', errorPayload)
 
     if (response.status === 401) {
@@ -63,7 +91,7 @@ export const apiCall = async (endpoint: string, options: RequestInit = {}) => {
       throw new Error('Your session expired. Please sign in again.')
     }
 
-    throw new Error(typeof errorPayload === 'string' ? errorPayload : response.statusText)
+    throw new Error(errorMessage || 'Request failed')
   }
 
   return parseJsonSafe(response)
