@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { ArrowRight } from "lucide-react"
 import { api } from "@/lib/api"
 
 export default function LandingPage() {
@@ -108,10 +109,17 @@ export default function LandingPage() {
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
-              <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-xs sm:text-sm">
-                   Get Started<span className="hidden sm:inline">&nbsp;(with college email)</span>
-                   <i data-lucide="arrow-right" style={{ width: 16 }} className="ml-2"></i>
-              </a>
+              <button 
+                onClick={handleGoogleAuth} 
+                disabled={isLoading}
+                className="btn btn-primary disabled:opacity-70 disabled:cursor-not-allowed !flex-col !items-start !py-2 !px-5 !h-auto gap-0.5"
+              >
+                  <div className="flex items-center font-bold text-sm">
+                    {isLoading ? 'Connecting...' : 'Get Started'}
+                    {!isLoading && <ArrowRight className="w-4 h-4 ml-2" />}
+                  </div>
+                  <span className="opacity-90 font-normal text-[10px] leading-none">(with college email)</span>
+              </button>
             </div>
           </div>
         </div>
