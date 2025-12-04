@@ -190,7 +190,7 @@ export default function DashboardPage({
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-sky-300 transition">Explore Hackathons & Events</h3>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-sky-300 transition">Explore Hackathons</h3>
                   </div>
                 </div>
               </button>
