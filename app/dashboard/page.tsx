@@ -37,6 +37,7 @@ export default function DashboardRoute() {
       onNavigateToPostTeam={() => router.push("/post")}
       onNavigateToTeams={() => router.push("/teams")}
       onNavigateToFriends={() => router.push("/friends")}
+      onNavigateToEvents={() => router.push("/events")}
       onNavigateToAdmin={() => router.push("/admin")}
     />
   )

@@ -247,4 +247,17 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ content }),
     }),
+
+  // Events
+  getEvents: (params: Record<string, unknown> = {}) => apiCall(`/events/${buildQueryString(params)}`),
+  getEvent: (eventId: number) => apiCall(`/events/${eventId}`),
+  createEvent: (payload: { title: string; description: string; link: string }) =>
+    apiCall('/events/', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    }),
+  deleteEvent: (eventId: number) =>
+    apiCall(`/events/${eventId}`, {
+      method: 'DELETE',
+    }),
 }

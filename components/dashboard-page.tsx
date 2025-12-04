@@ -13,6 +13,7 @@ interface DashboardPageProps {
   onNavigateToPostTeam: () => void
   onNavigateToTeams: () => void
   onNavigateToFriends: () => void
+  onNavigateToEvents: () => void
   onNavigateToAdmin?: () => void
 }
 
@@ -24,6 +25,7 @@ export default function DashboardPage({
   onNavigateToPostTeam,
   onNavigateToTeams,
   onNavigateToFriends,
+  onNavigateToEvents,
   onNavigateToAdmin,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -107,6 +109,13 @@ export default function DashboardPage({
               >
                 <span className="hidden sm:inline">Friends & Messages</span>
                 <span className="sm:hidden">Friends</span>
+              </button>
+              <button
+                onClick={onNavigateToEvents}
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/30 hover:bg-sky-500/20 transition"
+              >
+                <span className="hidden sm:inline">Discover Events</span>
+                <span className="sm:hidden">Events</span>
               </button>
               {isAdmin && onNavigateToAdmin && (
                 <button
