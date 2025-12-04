@@ -29,11 +29,15 @@ export default function AdminPage() {
   const { user, isLoading, logout } = useAuth()
   const [summary, setSummary] = useState<AdminSummary | null>(null)
   const [users, setUsers] = useState<any[]>([])
+  const [posts, setPosts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [pageError, setPageError] = useState<string | null>(null)
   const [info, setInfo] = useState<string | null>(null)
   const [tableError, setTableError] = useState<string | null>(null)
   const [updatingUserId, setUpdatingUserId] = useState<number | null>(null)
+  const [postInfo, setPostInfo] = useState<string | null>(null)
+  const [postError, setPostError] = useState<string | null>(null)
+  const [deletingPostId, setDeletingPostId] = useState<number | null>(null)
 
   const isAdmin = useMemo(() => {
     if (!user?.email) return false
@@ -59,12 +63,14 @@ export default function AdminPage() {
     const loadAdminData = async () => {
       try {
         setLoading(true)
-        const [summaryData, usersData] = await Promise.all([
+        const [summaryData, usersData, postsData] = await Promise.all([
           api.getAdminSummary(),
           api.getAdminUsers(),
+          api.getTeamPosts(),
         ])
         setSummary(summaryData)
         setUsers(usersData)
+        setPosts(Array.isArray(postsData) ? postsData : [])
       } catch (err) {
         console.error("Failed to load admin data", err)
         setPageError("Unable to load admin data. Please try again later.")
@@ -82,6 +88,15 @@ export default function AdminPage() {
       setSummary(summaryData)
     } catch (err) {
       console.error("Failed to refresh admin summary", err)
+    }
+  }
+
+  const refreshPosts = async () => {
+    try {
+      const postsData = await api.getTeamPosts()
+      setPosts(Array.isArray(postsData) ? postsData : [])
+    } catch (err) {
+      console.error("Failed to refresh admin posts", err)
     }
   }
 
@@ -110,6 +125,40 @@ export default function AdminPage() {
     } finally {
       setUpdatingUserId(null)
     }
+  }
+
+  const handleDeletePost = async (postId: number) => {
+    if (typeof window !== "undefined") {
+      const confirmed = window.confirm("Delete this post? This action cannot be undone.")
+      if (!confirmed) {
+        return
+      }
+    }
+
+    setPostInfo(null)
+    setPostError(null)
+
+    try {
+      setDeletingPostId(postId)
+      await api.deleteAdminPost(postId)
+      setPosts((prev) => prev.filter((post) => post.id !== postId))
+      setPostInfo("Post deleted successfully.")
+      await Promise.all([refreshSummary(), refreshPosts()])
+    } catch (err) {
+      console.error("Failed to delete post", err)
+      setPostError("Unable to delete post. Please try again.")
+    } finally {
+      setDeletingPostId(null)
+    }
+  }
+
+  const formatDate = (value: string) => {
+    if (!value) return "Unknown"
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) {
+      return value
+    }
+    return date.toLocaleDateString()
   }
 
   if (isLoading || loading) {
@@ -229,6 +278,64 @@ export default function AdminPage() {
             </Card>
           </div>
         )}
+
+        <Card className="border border-border bg-card p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">Post Moderation</h3>
+              <p className="text-sm text-muted-foreground">Remove inappropriate or duplicate posts</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={refreshPosts}>Refresh</Button>
+          </div>
+          {postInfo && (
+            <div className="mb-4 rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-300">
+              {postInfo}
+            </div>
+          )}
+          {postError && (
+            <div className="mb-4 rounded-md border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-300">
+              {postError}
+            </div>
+          )}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-muted-foreground border-b border-border">
+                  <th className="py-3 pr-4">Title</th>
+                  <th className="py-3 pr-4">Owner</th>
+                  <th className="py-3 pr-4">Created</th>
+                  <th className="py-3 pr-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="py-6 text-center text-muted-foreground">
+                      No posts available.
+                    </td>
+                  </tr>
+                )}
+                {posts.map((post) => (
+                  <tr key={post.id} className="border-b border-border/60 last:border-b-0">
+                    <td className="py-3 pr-4 text-foreground">{post.title}</td>
+                    <td className="py-3 pr-4 text-muted-foreground">{post.owner?.name || "Unknown"}</td>
+                    <td className="py-3 pr-4 text-muted-foreground">{formatDate(post.created_at)}</td>
+                    <td className="py-3 pr-4 text-right">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        disabled={deletingPostId === post.id}
+                        onClick={() => handleDeletePost(post.id)}
+                      >
+                        {deletingPostId === post.id ? "Deleting..." : "Delete"}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Card>
 
         <Card className="border border-border bg-card p-6">
           <div className="flex items-center justify-between mb-4">

@@ -214,4 +214,8 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify({ is_active: isActive }),
     }),
+  deleteAdminPost: (postId: number) =>
+    apiCall(`/admin/posts/${postId}`, {
+      method: 'DELETE',
+    }),
 }
