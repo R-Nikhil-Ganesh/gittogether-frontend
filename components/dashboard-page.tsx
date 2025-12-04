@@ -12,7 +12,7 @@ interface DashboardPageProps {
   onNavigateToFindTeam: () => void
   onNavigateToPostTeam: () => void
   onNavigateToTeams: () => void
-  onNavigateToFriends: () => void
+  onNavigateToInviteMembers?: () => void
   onNavigateToAdmin?: () => void
 }
 
@@ -23,7 +23,7 @@ export default function DashboardPage({
   onNavigateToFindTeam,
   onNavigateToPostTeam,
   onNavigateToTeams,
-  onNavigateToFriends,
+  onNavigateToInviteMembers,
   onNavigateToAdmin,
 }: DashboardPageProps) {
   const [dashboardData, setDashboardData] = useState<any>(null)
@@ -101,17 +101,10 @@ export default function DashboardPage({
                 <span className="hidden sm:inline">My Teams & Chat</span>
                 <span className="sm:hidden">Teams</span>
               </button>
-              <button
-                onClick={onNavigateToFriends}
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
-              >
-                <span className="hidden sm:inline">Friends & Messages</span>
-                <span className="sm:hidden">Friends</span>
-              </button>
               {isAdmin && onNavigateToAdmin && (
                 <button
                   onClick={onNavigateToAdmin}
-                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-purple-500/10 text-purple-300 border border-purple-500/30 hover:bg-purple-500/20 transition"
+                  className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
                 >
                   <span className="hidden sm:inline">Admin Dashboard</span>
                   <span className="sm:hidden">Admin</span>
@@ -120,7 +113,7 @@ export default function DashboardPage({
             </div>
 
             {/* Two Path Options */}
-            <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto px-4">
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-3xl mx-auto px-4">
               {/* Post a Team Request */}
               <button
                 onClick={onNavigateToPostTeam}
@@ -165,6 +158,30 @@ export default function DashboardPage({
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
                     <p className="text-sm text-muted-foreground mt-2">
                       Browse active team requests and apply to projects that match your skills
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Invite Members */}
+              <button
+                onClick={() => (onNavigateToInviteMembers ? onNavigateToInviteMembers() : onNavigateToTeams())}
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative space-y-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-primary/10 text-primary border border-primary/30 group-hover:bg-primary/20">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 20a6 6 0 0112 0" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 8v6" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 11h6" />
+                    </svg>
+                  </div>
+                  <div className="text-left">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition">Invite Members</h3>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Invite people to join your team or send invites to collaborators.
                     </p>
                   </div>
                 </div>
