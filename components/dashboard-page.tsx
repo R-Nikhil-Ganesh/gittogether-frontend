@@ -104,13 +104,6 @@ export default function DashboardPage({
                 <span className="sm:hidden">Teams</span>
               </button>
               <button
-                onClick={onNavigateToFriends}
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20 transition"
-              >
-                <span className="hidden sm:inline">Friends & Messages</span>
-                <span className="sm:hidden">Friends</span>
-              </button>
-              <button
                 onClick={onNavigateToEvents}
                 className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/30 hover:bg-sky-500/20 transition"
               >
@@ -128,8 +121,8 @@ export default function DashboardPage({
               )}
             </div>
 
-            {/* Two Path Options */}
-            <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto px-4">
+            {/* Two/Three Path Options */}
+            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto px-4">
               {/* Post a Team Request */}
               <button
                 onClick={onNavigateToPostTeam}
@@ -156,7 +149,7 @@ export default function DashboardPage({
               {/* Find a Team */}
               <button
                 onClick={onNavigateToFindTeam}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20 text-left"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -170,10 +163,31 @@ export default function DashboardPage({
                       />
                     </svg>
                   </div>
-                  <div className="text-left">
+                  <div>
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
                     <p className="text-sm text-muted-foreground mt-2">
                       Browse active team requests and apply to projects that match your skills
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Friends & Messages card placed beside Find a Team */}
+              <button
+                onClick={onNavigateToFriends}
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-200/10 text-left"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/6 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative space-y-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 group-hover:bg-emerald-500/20">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a4 4 0 00-4-4h-1M7 20h10M12 12a4 4 0 100-8 4 4 0 000 8z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-emerald-400 transition">Friends & Messages</h3>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      View your friends list and open conversations to stay connected
                     </p>
                   </div>
                 </div>
