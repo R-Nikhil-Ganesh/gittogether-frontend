@@ -144,6 +144,9 @@ export const api = {
     method: 'PUT',
     body: JSON.stringify({ status, response_message: responseMessage }),
   }),
+  withdrawTeamRequest: (requestId: number) => apiCall(`/requests/${requestId}/withdraw`, {
+    method: 'POST',
+  }),
   deleteTeamRequest: (requestId: number) => apiCall(`/requests/${requestId}`, {
     method: 'DELETE',
   }),

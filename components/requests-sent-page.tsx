@@ -40,6 +40,7 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [profileUserId, setProfileUserId] = useState<number | null>(null)
+  const [withdrawingId, setWithdrawingId] = useState<number | null>(null)
 
   useEffect(() => {
     fetchMyRequests()
@@ -75,8 +76,28 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
         return "bg-green-500/20 text-green-400 border-green-500/30"
       case "rejected":
         return "bg-red-500/20 text-red-400 border-red-500/30"
+      case "withdrawn":
+        return "bg-muted text-muted-foreground border-border"
       default:
         return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+    }
+  }
+
+  const handleWithdraw = async (requestId: number) => {
+    setError(null)
+    setWithdrawingId(requestId)
+    try {
+      await api.withdrawTeamRequest(requestId)
+      setRequestsSent((prev) =>
+        prev.map((request) =>
+          request.id === requestId ? { ...request, status: "withdrawn" } : request
+        )
+      )
+    } catch (err) {
+      console.error("Error withdrawing request:", err)
+      setError(err instanceof Error ? err.message : "Failed to withdraw request")
+    } finally {
+      setWithdrawingId(null)
     }
   }
 
@@ -170,6 +191,17 @@ export default function RequestsSentPage({ onBack, onNavigateToProfile }: Reques
                       >
                         View Profile
                       </Button>
+                      {request.status === "pending" && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="mt-4 ml-3 border-destructive text-destructive hover:bg-destructive/10"
+                          disabled={withdrawingId === request.id}
+                          onClick={() => handleWithdraw(request.id)}
+                        >
+                          {withdrawingId === request.id ? "Cancelling..." : "Cancel Request"}
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </Card>
