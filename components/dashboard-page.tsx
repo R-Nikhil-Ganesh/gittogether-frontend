@@ -103,13 +103,6 @@ export default function DashboardPage({
                 <span className="hidden sm:inline">My Teams & Chat</span>
                 <span className="sm:hidden">Teams</span>
               </button>
-              <button
-                onClick={onNavigateToEvents}
-                className="px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/30 hover:bg-sky-500/20 transition"
-              >
-                <span className="hidden sm:inline">Discover Events</span>
-                <span className="sm:hidden">Events</span>
-              </button>
               {isAdmin && onNavigateToAdmin && (
                 <button
                   onClick={onNavigateToAdmin}
@@ -122,7 +115,7 @@ export default function DashboardPage({
             </div>
 
             {/* Two/Three Path Options */}
-            <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto px-4">
+            <div className="grid md:grid-cols-4 gap-6 sm:gap-8 max-w-5xl mx-auto px-4">
               {/* Post a Team Request */}
               <button
                 onClick={onNavigateToPostTeam}
@@ -188,6 +181,27 @@ export default function DashboardPage({
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-emerald-400 transition">Friends & Messages</h3>
                     <p className="text-sm text-muted-foreground mt-2">
                       View your friends list and open conversations to stay connected
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              {/* Discover Events card placed beside Friends & Messages */}
+              <button
+                onClick={onNavigateToEvents}
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-sky-500 hover:shadow-lg hover:shadow-sky-500/20 text-left"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-sky-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative space-y-4">
+                  <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-sky-500/10 text-sky-300 border border-sky-500/30 group-hover:bg-sky-500/20">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3M5 11h14M5 19h14M10 15h4" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-sky-300 transition">Discover Events</h3>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Browse upcoming events and meetups to join or host collaborations
                     </p>
                   </div>
                 </div>
