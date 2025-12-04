@@ -3,11 +3,13 @@
 import { KeyboardEvent, MouseEvent, useCallback, useEffect, useMemo, useState } from "react"
 
 import PageHeader from "@/components/page-header"
+import { ProfileAvatar } from "@/components/profile-avatar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { api } from "@/lib/api"
 import { useAuth } from "@/lib/useAuth"
+import { normalizeExternalUrl } from "@/lib/utils"
 
 interface FriendSummary {
   id: number
@@ -26,6 +28,29 @@ type RelationshipStatus = "self" | "friend" | "pending_incoming" | "pending_outg
 interface FriendSearchResult {
   user: FriendSummary
   relationship_status: RelationshipStatus
+}
+
+interface PublicSkill {
+  id: number
+  name: string
+  description?: string | null
+  category?: string | null
+  created_at?: string
+}
+
+interface PublicProfile {
+  id: number
+  name: string
+  email: string
+  bio?: string | null
+  profile_picture?: string | null
+  department?: string | null
+  year?: string | null
+  roll_number?: string | null
+  linkedin?: string | null
+  github?: string | null
+  leetcode?: string | null
+  skills?: PublicSkill[]
 }
 
 interface FriendRequest {
@@ -72,8 +97,33 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
   const [error, setError] = useState<string | null>(null)
   const [chatError, setChatError] = useState<string | null>(null)
   const [profilePreview, setProfilePreview] = useState<FriendSearchResult | null>(null)
+  const [profilePreviewData, setProfilePreviewData] = useState<PublicProfile | null>(null)
+  const [profilePreviewLoading, setProfilePreviewLoading] = useState(false)
+  const [profilePreviewError, setProfilePreviewError] = useState<string | null>(null)
 
   const selectedFriend = useMemo(() => friends.find((f) => f.id === selectedFriendId) ?? null, [friends, selectedFriendId])
+  const previewProfile = useMemo(() => {
+    if (!profilePreview) {
+      return null
+    }
+
+    const baseUser = profilePreview.user
+
+    return {
+      id: profilePreviewData?.id ?? baseUser.id,
+      name: profilePreviewData?.name ?? baseUser.name,
+      email: profilePreviewData?.email ?? baseUser.email,
+      bio: profilePreviewData?.bio ?? baseUser.bio ?? "",
+      profile_picture: profilePreviewData?.profile_picture ?? baseUser.profile_picture,
+      department: profilePreviewData?.department ?? null,
+      year: profilePreviewData?.year ?? null,
+      roll_number: profilePreviewData?.roll_number ?? null,
+      linkedin: profilePreviewData?.linkedin ?? null,
+      github: profilePreviewData?.github ?? null,
+      leetcode: profilePreviewData?.leetcode ?? null,
+      skills: profilePreviewData?.skills ?? [],
+    }
+  }, [profilePreview, profilePreviewData])
 
   const loadFriends = useCallback(async () => {
     try {
@@ -147,6 +197,43 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
     return () => clearInterval(interval)
   }, [loadMessages, selectedFriendId])
 
+  useEffect(() => {
+    if (!profilePreview) {
+      setProfilePreviewData(null)
+      setProfilePreviewError(null)
+      setProfilePreviewLoading(false)
+      return
+    }
+
+    let isCancelled = false
+
+    const fetchProfile = async () => {
+      try {
+        setProfilePreviewLoading(true)
+        setProfilePreviewError(null)
+        const profile = await api.getUserPublicProfile(profilePreview.user.id)
+        if (!isCancelled) {
+          setProfilePreviewData(profile)
+        }
+      } catch (err) {
+        console.error("Failed to load public profile", err)
+        if (!isCancelled) {
+          setProfilePreviewError("Unable to load the full profile right now.")
+        }
+      } finally {
+        if (!isCancelled) {
+          setProfilePreviewLoading(false)
+        }
+      }
+    }
+
+    fetchProfile()
+
+    return () => {
+      isCancelled = true
+    }
+  }, [profilePreview])
+
   const handleSendFriendRequest = async (targetId: number) => {
     try {
       setInfo(null)
@@ -174,6 +261,8 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
 
   const closeProfilePreview = () => {
     setProfilePreview(null)
+    setProfilePreviewData(null)
+    setProfilePreviewError(null)
   }
 
   useEffect(() => {
@@ -286,6 +375,24 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
       default:
         return "Send a request to open a 24-hour chat window and coordinate quickly."
     }
+  }
+
+  const renderSocialLink = (url?: string | null) => {
+    const normalized = normalizeExternalUrl(url)
+    if (!normalized) {
+      return <p className="text-sm text-muted-foreground italic">Not provided</p>
+    }
+
+    return (
+      <a
+        href={normalized}
+        target="_blank"
+        rel="noreferrer"
+        className="text-sm text-accent hover:text-accent/80 break-all"
+      >
+        {normalized}
+      </a>
+    )
   }
 
   return (
@@ -507,7 +614,7 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
         </Card>
       </main>
 
-      {profilePreview && (
+      {profilePreview && previewProfile && (
         <div
           className="fixed inset-0 z-50 overflow-y-auto bg-black/70 px-4 py-10"
           role="dialog"
@@ -515,49 +622,56 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
           aria-labelledby="profile-preview-title"
           onClick={closeProfilePreview}
         >
-          <div className="relative mx-auto w-full max-w-4xl" onClick={(event) => event.stopPropagation()}>
+          <div className="relative mx-auto w-full max-w-5xl" onClick={(event) => event.stopPropagation()}>
             <Card className="border border-border bg-card/95 p-0 shadow-2xl backdrop-blur-xl">
               <div className="flex flex-col gap-3 border-b border-border/80 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/80">Profile Preview</p>
-                  <h2 id="profile-preview-title" className="text-2xl font-semibold text-foreground">
-                    {profilePreview.user.name}
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/80">General Profile</p>
+                  <h2 id="profile-preview-title" className="text-3xl font-semibold text-foreground">
+                    {previewProfile.name}
                   </h2>
-                  <p className="text-sm text-muted-foreground break-all">{profilePreview.user.email}</p>
+                  <p className="text-sm text-muted-foreground break-all">{previewProfile.email}</p>
                 </div>
                 <Button variant="ghost" size="icon" onClick={closeProfilePreview} aria-label="Close profile preview">
                   ✕
                 </Button>
               </div>
 
-              <div className="grid gap-6 px-6 py-6 lg:grid-cols-[280px_1fr]">
-                <div className="space-y-4">
-                  {profilePreview.user.profile_picture ? (
-                    <img
-                      src={profilePreview.user.profile_picture}
-                      alt={profilePreview.user.name}
-                      className="h-40 w-40 rounded-full border border-border object-cover"
-                    />
-                  ) : (
-                    <div className="h-40 w-40 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center text-4xl font-semibold">
-                      {profilePreview.user.name ? profilePreview.user.name.charAt(0).toUpperCase() : "?"}
-                    </div>
-                  )}
+              {profilePreviewError && (
+                <div className="mx-6 mt-4 rounded-md border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                  {profilePreviewError}
+                </div>
+              )}
 
-                  <div className="rounded-lg border border-border bg-background/70 px-4 py-3 text-sm text-muted-foreground min-h-[120px]">
-                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/70">About</p>
-                    <p>{profilePreview.user.bio ?? "This classmate has not added a bio yet."}</p>
+              <div className="grid gap-8 px-6 py-6 lg:grid-cols-[320px_1fr]">
+                <div className="space-y-6">
+                  <div className="flex flex-col items-center gap-4 text-center">
+                    <ProfileAvatar
+                      name={previewProfile.name}
+                      imageUrl={previewProfile.profile_picture ?? undefined}
+                      size="xl"
+                      className="border-4 border-primary/50"
+                    />
+                    <div className="w-full space-y-4 rounded-lg border border-border bg-background/70 px-4 py-4 text-left">
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Department</p>
+                        <p className="text-sm text-foreground">{previewProfile.department ?? "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Batch</p>
+                        <p className="text-sm text-foreground">{previewProfile.year ?? "Not provided"}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs uppercase tracking-wide text-muted-foreground">Email</p>
+                        <p className="text-sm text-foreground break-all">{previewProfile.email}</p>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="rounded-lg border border-border bg-background/70 px-4 py-3 space-y-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Email</p>
-                      <p className="text-sm text-foreground break-all">{profilePreview.user.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Relationship</p>
-                      <p className="text-sm text-foreground">{relationshipLabel(profilePreview.relationship_status)}</p>
-                    </div>
+                  <div className="space-y-3 rounded-lg border border-border bg-background/70 px-4 py-4">
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Connection Status</p>
+                    <p className="text-sm text-foreground">{relationshipLabel(profilePreview.relationship_status)}</p>
+                    <p className="text-sm text-muted-foreground">{relationshipDescription(profilePreview.relationship_status)}</p>
                   </div>
 
                   <div className="flex flex-col gap-2">
@@ -573,26 +687,50 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
                   </div>
                 </div>
 
-                <div className="space-y-5">
-                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-3">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Connection Status</h3>
-                    <p className="text-sm text-muted-foreground">{relationshipDescription(profilePreview.relationship_status)}</p>
-                  </section>
+                <div className="space-y-6">
+                  {profilePreviewLoading && (
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground">Loading full profile details...</p>
+                  )}
 
-                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-2">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Next Steps</h3>
-                    <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                      <li>Send or respond to a request to open a 24-hour chat window.</li>
-                      <li>Use the requests panel to keep tabs on pending invites.</li>
-                      <li>Once connected, head to the chat section to stay in sync.</li>
-                    </ul>
-                  </section>
-
-                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-2">
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Quick Notes</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Messages expire after 24 hours, so pin important info elsewhere. Keep requests relevant to your coursework teams.
+                  <section className="space-y-2 rounded-lg border border-border bg-background/70 px-5 py-4">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Bio</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {previewProfile.bio || "No bio provided yet."}
                     </p>
+                  </section>
+
+                  <section className="space-y-3 rounded-lg border border-border bg-background/70 px-5 py-4">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Skills & Focus</h3>
+                      <span className="text-xs text-muted-foreground">Last synced from their profile</span>
+                    </div>
+                    {previewProfile.skills && previewProfile.skills.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {previewProfile.skills.map((skill) => (
+                          <span key={skill.id} className="rounded-full border border-border bg-background px-3 py-1 text-xs font-medium text-foreground">
+                            {skill.name}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-muted-foreground">Skills not listed yet.</p>
+                    )}
+                  </section>
+
+                  <section className="space-y-4 rounded-lg border border-border bg-background/70 px-5 py-4">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Social Links</h3>
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">LinkedIn</p>
+                      {renderSocialLink(previewProfile.linkedin)}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">GitHub</p>
+                      {renderSocialLink(previewProfile.github)}
+                    </div>
+                    <div className="space-y-2">
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">LeetCode</p>
+                      {renderSocialLink(previewProfile.leetcode)}
+                    </div>
                   </section>
                 </div>
               </div>
