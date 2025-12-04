@@ -165,7 +165,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Project Title */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">Project Title</label>
+              <label className="text-sm font-semibold text-foreground">Project/Team Name</label>
               <Input
                 placeholder="e.g., AI Collaboration Platform"
                 value={title}
