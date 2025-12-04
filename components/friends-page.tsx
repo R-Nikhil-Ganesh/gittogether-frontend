@@ -176,6 +176,21 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
     setProfilePreview(null)
   }
 
+  useEffect(() => {
+    if (!profilePreview) {
+      return
+    }
+
+    const handleEsc = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        closeProfilePreview()
+      }
+    }
+
+    window.addEventListener("keydown", handleEsc)
+    return () => window.removeEventListener("keydown", handleEsc)
+  }, [profilePreview])
+
   const handleAcceptRequest = async (requestId: number) => {
     try {
       setInfo(null)
@@ -257,6 +272,21 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
   }
 
   const canAddFriend = (status: RelationshipStatus) => status === "none"
+
+  const relationshipDescription = (status: RelationshipStatus) => {
+    switch (status) {
+      case "friend":
+        return "You're already connected. Use the chat panel to keep conversations fresh."
+      case "pending_outgoing":
+        return "Request sent. They'll need to accept before chats unlock."
+      case "pending_incoming":
+        return "They reached out to you. Head to the requests panel to accept or decline."
+      case "self":
+        return "This is your profile view."
+      default:
+        return "Send a request to open a 24-hour chat window and coordinate quickly."
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -479,58 +509,92 @@ export default function FriendsPage({ onBack, onNavigateToProfile }: FriendsPage
 
       {profilePreview && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-10"
+          className="fixed inset-0 z-50 overflow-y-auto bg-black/70 px-4 py-10"
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-preview-title"
           onClick={closeProfilePreview}
         >
-          <div className="relative w-full max-w-lg" onClick={(event) => event.stopPropagation()}>
-            <Card className="border border-border bg-card p-6 shadow-2xl space-y-5">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-4">
+          <div className="relative mx-auto w-full max-w-4xl" onClick={(event) => event.stopPropagation()}>
+            <Card className="border border-border bg-card/95 p-0 shadow-2xl backdrop-blur-xl">
+              <div className="flex flex-col gap-3 border-b border-border/80 px-6 py-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/80">Profile Preview</p>
+                  <h2 id="profile-preview-title" className="text-2xl font-semibold text-foreground">
+                    {profilePreview.user.name}
+                  </h2>
+                  <p className="text-sm text-muted-foreground break-all">{profilePreview.user.email}</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={closeProfilePreview} aria-label="Close profile preview">
+                  ✕
+                </Button>
+              </div>
+
+              <div className="grid gap-6 px-6 py-6 lg:grid-cols-[280px_1fr]">
+                <div className="space-y-4">
                   {profilePreview.user.profile_picture ? (
                     <img
                       src={profilePreview.user.profile_picture}
                       alt={profilePreview.user.name}
-                      className="h-16 w-16 rounded-full border border-border object-cover"
+                      className="h-40 w-40 rounded-full border border-border object-cover"
                     />
                   ) : (
-                    <div className="h-16 w-16 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center text-xl font-semibold">
+                    <div className="h-40 w-40 rounded-full border border-border bg-primary/10 text-primary flex items-center justify-center text-4xl font-semibold">
                       {profilePreview.user.name ? profilePreview.user.name.charAt(0).toUpperCase() : "?"}
                     </div>
                   )}
-                  <div>
-                    <h2 id="profile-preview-title" className="text-xl font-semibold text-foreground">
-                      {profilePreview.user.name}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">{profilePreview.user.email}</p>
-                    {profilePreview.user.bio && <p className="text-sm text-muted-foreground mt-2">{profilePreview.user.bio}</p>}
+
+                  <div className="rounded-lg border border-border bg-background/70 px-4 py-3 text-sm text-muted-foreground min-h-[120px]">
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-foreground/70">About</p>
+                    <p>{profilePreview.user.bio ?? "This classmate has not added a bio yet."}</p>
+                  </div>
+
+                  <div className="rounded-lg border border-border bg-background/70 px-4 py-3 space-y-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Email</p>
+                      <p className="text-sm text-foreground break-all">{profilePreview.user.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">Relationship</p>
+                      <p className="text-sm text-foreground">{relationshipLabel(profilePreview.relationship_status)}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      disabled={!canAddFriend(profilePreview.relationship_status)}
+                      onClick={() => handleSendFriendRequest(profilePreview.user.id)}
+                    >
+                      {relationshipLabel(profilePreview.relationship_status)}
+                    </Button>
+                    <Button variant="outline" onClick={closeProfilePreview}>
+                      Close preview
+                    </Button>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon" onClick={closeProfilePreview} aria-label="Close profile preview">
-                  X
-                </Button>
-              </div>
 
-              <div className="rounded-md border border-border bg-background/60 px-4 py-3 text-xs text-muted-foreground">
-                {profilePreview.relationship_status === "friend" && "You're already connected."}
-                {profilePreview.relationship_status === "pending_outgoing" && "Request sent. Waiting for them to respond."}
-                {profilePreview.relationship_status === "pending_incoming" && "They requested you. Respond in the requests panel."}
-                {profilePreview.relationship_status === "self" && "This is you."}
-                {profilePreview.relationship_status === "none" && "Send a request to open a 24-hour chat window."}
-              </div>
+                <div className="space-y-5">
+                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-3">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Connection Status</h3>
+                    <p className="text-sm text-muted-foreground">{relationshipDescription(profilePreview.relationship_status)}</p>
+                  </section>
 
-              <div className="flex flex-wrap justify-end gap-2">
-                <Button variant="outline" onClick={closeProfilePreview}>
-                  Close
-                </Button>
-                <Button
-                  disabled={!canAddFriend(profilePreview.relationship_status)}
-                  onClick={() => handleSendFriendRequest(profilePreview.user.id)}
-                >
-                  {relationshipLabel(profilePreview.relationship_status)}
-                </Button>
+                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Next Steps</h3>
+                    <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
+                      <li>Send or respond to a request to open a 24-hour chat window.</li>
+                      <li>Use the requests panel to keep tabs on pending invites.</li>
+                      <li>Once connected, head to the chat section to stay in sync.</li>
+                    </ul>
+                  </section>
+
+                  <section className="rounded-lg border border-border bg-background/70 px-5 py-4 space-y-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wide text-foreground">Quick Notes</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Messages expire after 24 hours, so pin important info elsewhere. Keep requests relevant to your coursework teams.
+                    </p>
+                  </section>
+                </div>
               </div>
             </Card>
           </div>
