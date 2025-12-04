@@ -99,19 +99,18 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-xl tracking-tight text-[var(--text-white)]">GitTogether</span>
+              <span className="font-bold text-lg sm:text-xl tracking-tight text-[var(--text-white)]">GitTogether</span>
             </div>
 
-            <div className="hidden md:flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-12 flex-1 justify-center">
               <a href="#features" className="nav-link">Features</a>
               <a href="#how-it-works" className="nav-link">How it Works</a>
-              <a href="#community" className="nav-link">Community</a>
             </div>
 
-            <div className="flex items-center gap-4">
-              <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-sm">
-                Get Started
-                <i data-lucide="arrow-right" style={{ width: 16 }} className="ml-2"></i>
+            <div className="flex items-center gap-2 sm:gap-4">
+              <a href="#" onClick={handleGoogleAuth} className="btn btn-primary text-xs sm:text-sm">
+	                Get Started<span className="hidden sm:inline">&nbsp;(with college email)</span>
+	                <i data-lucide="arrow-right" style={{ width: 16 }} className="ml-2"></i>
               </a>
             </div>
           </div>
