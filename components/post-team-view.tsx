@@ -208,7 +208,7 @@ export default function PostTeamView({ onBack, onNavigateToProfile }: PostTeamVi
 
             {/* Project Description */}
             <div className="space-y-2">
-              <label className="text-sm font-semibold text-foreground">Project Description</label>
+              <label className="text-sm font-semibold text-foreground">Description</label>
               <textarea
                 placeholder="Describe your project, what you're building, and what you're looking for in team members..."
                 value={description}
