@@ -251,7 +251,7 @@ export const api = {
   // Events
   getEvents: (params: Record<string, unknown> = {}) => apiCall(`/events/${buildQueryString(params)}`),
   getEvent: (eventId: number) => apiCall(`/events/${eventId}`),
-  createEvent: (payload: { title: string; description: string; link: string }) =>
+  createEvent: (payload: { title: string; description: string; link: string; image_url?: string }) =>
     apiCall('/events/', {
       method: 'POST',
       body: JSON.stringify(payload),
@@ -260,4 +260,12 @@ export const api = {
     apiCall(`/events/${eventId}`, {
       method: 'DELETE',
     }),
+  uploadEventImage: (file: File) => {
+    const formData = new FormData()
+    formData.append('file', file)
+    return apiCall('/events/upload-image', {
+      method: 'POST',
+      body: formData,
+    })
+  },
 }

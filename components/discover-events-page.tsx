@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useEffect, useMemo, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react"
 
 import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
@@ -21,6 +21,7 @@ interface EventItem {
   title: string
   description: string
   link: string
+  image_url?: string | null
   created_at: string
   owner: EventOwner
 }
@@ -38,9 +39,11 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
   const [formBusy, setFormBusy] = useState(false)
   const [title, setTitle] = useState("")
   const [link, setLink] = useState("")
+  const [imageUrl, setImageUrl] = useState("")
   const [description, setDescription] = useState("")
   const [info, setInfo] = useState<string | null>(null)
   const [search, setSearch] = useState("")
+  const [imageUploading, setImageUploading] = useState(false)
 
   const visibleEvents = useMemo(() => {
     if (!search.trim()) {
@@ -86,10 +89,12 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
         title: title.trim(),
         description: description.trim(),
         link: link.trim(),
+        image_url: imageUrl.trim() ? imageUrl.trim() : undefined,
       })
       setInfo("Event published!")
       setTitle("")
       setLink("")
+      setImageUrl("")
       setDescription("")
       await loadEvents()
     } catch (err) {
@@ -97,6 +102,35 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
       setError(err instanceof Error ? err.message : "Unable to publish event")
     } finally {
       setFormBusy(false)
+    }
+  }
+
+  const handleImageFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    event.target.value = ""
+    if (!file) {
+      return
+    }
+
+    if (file.size > 7 * 1024 * 1024) {
+      setError("Image must be smaller than 7MB.")
+      return
+    }
+
+    setImageUploading(true)
+    setError(null)
+    setInfo(null)
+    try {
+      const response = await api.uploadEventImage(file)
+      if (response?.url) {
+        setImageUrl(response.url)
+        setInfo("Image uploaded successfully.")
+      }
+    } catch (err) {
+      console.error("Failed to upload image", err)
+      setError(err instanceof Error ? err.message : "Unable to upload image")
+    } finally {
+      setImageUploading(false)
     }
   }
 
@@ -157,6 +191,34 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
               placeholder="Event link (Google Form, site, etc.)"
               type="url"
             />
+            <Input
+              value={imageUrl}
+              onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="Image link (auto-filled after upload, optional)"
+              type="url"
+            />
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-3">
+                <label className="text-sm text-muted-foreground" htmlFor="event-image-upload">
+                  Upload poster (optional)
+                </label>
+                <input
+                  id="event-image-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageFileChange}
+                  className="text-xs"
+                  disabled={imageUploading}
+                />
+              </div>
+              {imageUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
+              {!imageUploading && imageUrl && (
+                <div className="overflow-hidden rounded-md border border-border/70">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={imageUrl} alt="Event preview" className="w-full max-h-56 object-cover" loading="lazy" />
+                </div>
+              )}
+            </div>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -166,7 +228,7 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
             />
             <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>Keep it short and helpful. You can delete it anytime.</span>
-              <Button type="submit" disabled={formBusy}>
+              <Button type="submit" disabled={formBusy || imageUploading}>
                 {formBusy ? "Posting..." : "Post event"}
               </Button>
             </div>
@@ -213,6 +275,17 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
                       </Button>
                     )}
                   </div>
+                  {event.image_url && (
+                    <div className="overflow-hidden rounded-lg border border-border/70">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={event.image_url}
+                        alt={`${event.title} poster`}
+                        className="w-full max-h-72 object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                   <p className="text-sm text-foreground whitespace-pre-line">{event.description}</p>
                   <a
                     href={event.link}
