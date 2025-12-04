@@ -207,7 +207,7 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
                 <label className="text-sm text-muted-foreground" htmlFor="event-image-upload">
                   Upload poster (optional)
                 </label>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <input
                     id="event-image-upload"
                     ref={fileInputRef}
