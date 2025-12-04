@@ -72,9 +72,9 @@ export default function DashboardPage({
         <div className="flex items-center justify-center min-h-[calc(100vh-80px)] px-4 py-12">
           <div className="w-full max-w-4xl space-y-12">
             <div className="text-center space-y-2 px-4">
-              <h2 className="text-2xl sm:text-4xl font-bold text-foreground">What would you like to do?</h2>
+              <h2 className="text-2xl sm:text-4xl font-bold text-foreground">Find teammates. Join teams. Discover hackathons.</h2>
               <p className="text-base sm:text-lg text-muted-foreground">
-                Choose your path to find collaborators or share your project
+                Your campus hub for forming project teams and finding collaborators.
               </p>
             </div>
 
@@ -130,11 +130,8 @@ export default function DashboardPage({
                   </div>
                   <div className="text-left">
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition">
-                      Post a Team Request
+                      Create a Team for an Event
                     </h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Share your project idea and find developers or designers to join your team
-                    </p>
                   </div>
                 </div>
               </button>
@@ -157,10 +154,7 @@ export default function DashboardPage({
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-accent transition">Find a Team</h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Browse active team requests and apply to projects that match your skills
-                    </p>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-accent transition">Join an Existing Team</h3>
                   </div>
                 </div>
               </button>
@@ -179,9 +173,6 @@ export default function DashboardPage({
                   </div>
                   <div>
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-emerald-400 transition">Friends & Messages</h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      View your friends list and open conversations to stay connected
-                    </p>
                   </div>
                 </div>
               </button>
@@ -199,10 +190,7 @@ export default function DashboardPage({
                     </svg>
                   </div>
                   <div>
-                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-sky-300 transition">Discover Events</h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Browse upcoming events and meetups to join or host collaborations
-                    </p>
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-sky-300 transition">Explore Hackathons & Events</h3>
                   </div>
                 </div>
               </button>
