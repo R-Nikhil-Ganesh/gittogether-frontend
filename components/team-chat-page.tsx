@@ -149,19 +149,43 @@ export default function TeamChatPage({ teamId, onBack, onNavigateToProfile }: Te
     setProfileUserId(userId)
   }
 
-  const formatTimestamp = useMemo(
-    () => (isoString: string) => {
-      const date = new Date(isoString + (isoString.includes('Z') ? '' : 'Z'))
-      return date.toLocaleString('en-IN', {
-        hour: "2-digit",
-        minute: "2-digit",
-        month: "short",
-        day: "numeric",
-        timeZone: 'Asia/Kolkata'
-      })
-    },
-    []
-  )
+  const formatTimestamp = useMemo(() => {
+    const formatter = new Intl.DateTimeFormat('en-IN', {
+      hour: "2-digit",
+      minute: "2-digit",
+      month: "short",
+      day: "numeric",
+      timeZone: 'Asia/Kolkata'
+    })
+
+    return (isoString?: string | null) => {
+      if (!isoString) {
+        return ''
+      }
+
+      const trimmed = isoString.trim()
+      if (!trimmed) {
+        return ''
+      }
+
+      const normalized = trimmed.replace(' ', 'T')
+      const hasExplicitTimezone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(normalized)
+      // Only append UTC designator when backend omits any timezone information.
+      const dateString = hasExplicitTimezone ? normalized : `${normalized}Z`
+      const parsed = Date.parse(dateString)
+
+      if (!Number.isNaN(parsed)) {
+        return formatter.format(new Date(parsed))
+      }
+
+      const fallback = Date.parse(normalized)
+      if (!Number.isNaN(fallback)) {
+        return formatter.format(new Date(fallback))
+      }
+
+      return ''
+    }
+  }, [])
 
   const handleRemoveMember = async (memberId: number) => {
     if (!team || team.role !== "owner" || memberId === user?.id) {
