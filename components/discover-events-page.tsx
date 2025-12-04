@@ -202,12 +202,12 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
               placeholder="Image link (auto-filled after upload, optional)"
               type="url"
             />
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <label className="text-sm text-muted-foreground" htmlFor="event-image-upload">
-                  Upload poster (optional)
-                </label>
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <div className="rounded-lg border border-border bg-input/60 px-3 py-3 space-y-3">
+              <label className="text-xs font-medium uppercase tracking-wide text-muted-foreground" htmlFor="event-image-upload">
+                Upload poster (optional)
+              </label>
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap items-center gap-2">
                   <input
                     id="event-image-upload"
                     ref={fileInputRef}
@@ -227,11 +227,11 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
                     {imageUploading ? "Uploading..." : "Choose file"}
                   </Button>
                   <span className="text-xs text-muted-foreground max-w-[160px] truncate">
-                    {selectedFileName || "No file selected."}
+                    {selectedFileName || "No file selected"}
                   </span>
                 </div>
+                {imageUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
               </div>
-              {imageUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
               {!imageUploading && imageUrl && (
                 <div className="overflow-hidden rounded-md border border-border/70">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
