@@ -1,6 +1,6 @@
 "use client"
 
-import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from "react"
+import { ChangeEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react"
 
 import PageHeader from "@/components/page-header"
 import { Button } from "@/components/ui/button"
@@ -44,6 +44,8 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
   const [info, setInfo] = useState<string | null>(null)
   const [search, setSearch] = useState("")
   const [imageUploading, setImageUploading] = useState(false)
+  const [selectedFileName, setSelectedFileName] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   const visibleEvents = useMemo(() => {
     if (!search.trim()) {
@@ -96,6 +98,7 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
       setLink("")
       setImageUrl("")
       setDescription("")
+      setSelectedFileName(null)
       await loadEvents()
     } catch (err) {
       console.error("Failed to publish event", err)
@@ -116,6 +119,8 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
       setError("Image must be smaller than 7MB.")
       return
     }
+
+    setSelectedFileName(file.name)
 
     setImageUploading(true)
     setError(null)
@@ -198,18 +203,33 @@ export default function DiscoverEventsPage({ onBack, onNavigateToProfile }: Disc
               type="url"
             />
             <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <label className="text-sm text-muted-foreground" htmlFor="event-image-upload">
                   Upload poster (optional)
                 </label>
-                <input
-                  id="event-image-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageFileChange}
-                  className="text-xs"
-                  disabled={imageUploading}
-                />
+                <div className="flex items-center gap-2">
+                  <input
+                    id="event-image-upload"
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageFileChange}
+                    className="sr-only"
+                    disabled={imageUploading}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={imageUploading}
+                  >
+                    {imageUploading ? "Uploading..." : "Choose file"}
+                  </Button>
+                  <span className="text-xs text-muted-foreground max-w-[160px] truncate">
+                    {selectedFileName || "No file selected."}
+                  </span>
+                </div>
               </div>
               {imageUploading && <p className="text-xs text-muted-foreground">Uploading image...</p>}
               {!imageUploading && imageUrl && (
