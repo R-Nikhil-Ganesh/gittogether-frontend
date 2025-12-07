@@ -119,7 +119,7 @@ export default function DashboardPage({
               {/* Post a Team Request */}
               <button
                 onClick={onNavigateToPostTeam}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20 text-center"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -128,7 +128,7 @@ export default function DashboardPage({
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                     </svg>
                   </div>
-                  <div className="text-left">
+                  <div>
                     <h3 className="text-lg sm:text-xl font-bold text-foreground group-hover:text-primary transition">
                       Create a Team for an Event
                     </h3>
@@ -139,7 +139,7 @@ export default function DashboardPage({
               {/* Find a Team */}
               <button
                 onClick={onNavigateToFindTeam}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20 text-left"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-accent hover:shadow-lg hover:shadow-accent/20 text-center"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -162,7 +162,7 @@ export default function DashboardPage({
               {/* Friends & Messages card placed beside Find a Team */}
               <button
                 onClick={onNavigateToFriends}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-200/10 text-left"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-200/10 text-center"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/6 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
@@ -180,7 +180,7 @@ export default function DashboardPage({
               {/* Discover Events card placed beside Friends & Messages */}
               <button
                 onClick={onNavigateToEvents}
-                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-sky-500 hover:shadow-lg hover:shadow-sky-500/20 text-left"
+                className="group relative overflow-hidden rounded-lg border border-border bg-card p-6 sm:p-8 transition-all duration-300 hover:border-sky-500 hover:shadow-lg hover:shadow-sky-500/20 text-center"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-sky-500/8 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="relative space-y-4">
